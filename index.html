@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cap. 5 · El compromiso sesgo–complejidad</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#fcfcfb; --ink:#1c1e21; --ink-2:#464a50; --muted:#767b81;
+  --rule:#dcd9d2; --accent:#17608a; --accent-soft:#e2ecf2; --accent-ink:#0f4666;
+  --series-2:#8f9398; --foot:3.1rem;
+  --serif:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:clamp(14px, 0.62vw + 0.55vh + 2px, 25px);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;overflow:hidden}
+button{font:inherit;color:inherit}
+.katex{font-size:1.08em}
+
+/* ---------- Diapositivas ---------- */
+#deck{position:fixed;inset:0 0 var(--foot) 0}
+.slide{position:absolute;inset:0;padding:2.2rem 4rem 1.6rem;overflow-y:auto;opacity:0;visibility:hidden;transition:opacity .18s ease}
+.slide.active{opacity:1;visibility:visible}
+body.camera .slide{padding-right:calc(4rem + 25vw)}
+.inner{max-width:76rem;margin:0 auto}
+.slide>.kicker{max-width:76rem;margin:0 auto .25rem}
+.kicker{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.25rem}
+h1,h2,h3{font-family:var(--serif);font-weight:normal;margin:0;line-height:1.2}
+h2{font-size:2.05rem;margin-bottom:1.1rem;color:var(--ink)}
+h3{font-size:1.2rem;margin:0 0 .5rem;color:var(--ink)}
+p{margin:.45rem 0}
+.lead{font-size:1.2rem;color:var(--ink-2);max-width:52rem}
+.small{font-size:.86rem;color:var(--muted)}
+.muted{color:var(--muted)}
+ul.clean{padding-left:1.1rem;margin:.4rem 0}
+ul.clean li{margin:.35rem 0}
+ol.road{list-style:none;padding:0;margin:.5rem 0;counter-reset:r}
+ol.road li{counter-increment:r;display:grid;grid-template-columns:2.2rem 1fr;gap:.6rem;padding:.55rem 0;border-top:1px solid var(--rule)}
+ol.road li::before{content:counter(r);font-family:var(--serif);font-size:1.35rem;color:var(--accent);line-height:1.2}
+.cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:2.6rem;align-items:start}
+.cols.wide-r{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+.cols.three{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.8rem}
+hr.thin{border:0;border-top:1px solid var(--rule);margin:1rem 0}
+em.hl{font-style:normal;color:var(--accent-ink);font-weight:600}
+
+/* Recuadros */
+.box{border-left:3px solid var(--accent);background:var(--surface);padding:.9rem 1.3rem;margin:.7rem 0}
+.box .lbl,.quote .lbl,.label{display:block;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.35rem}
+.quote{border:1px solid var(--rule);background:var(--surface);padding:1rem 1.4rem;font-family:var(--serif);font-size:1.08rem}
+.quote ul{margin:.4rem 0}
+.note{border-top:1px solid var(--rule);padding-top:.6rem;margin-top:1rem;font-size:.9rem;color:var(--ink-2)}
+.idea{font-family:var(--serif);font-size:1.25rem;color:var(--ink);border-left:3px solid var(--rule);padding:.3rem 0 .3rem 1rem;margin:.9rem 0}
+
+/* Fragmentos */
+.frag{opacity:0;visibility:hidden;transition:opacity .2s ease}
+.frag.on{opacity:1;visibility:visible}
+
+/* Pasos de demostración */
+.steps{display:flex;flex-direction:column;gap:.15rem;margin:.5rem 0}
+.step{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:2rem;align-items:center;padding:.25rem 0 .25rem 1rem;border-left:3px solid transparent;transition:border-color .2s}
+.step.current{border-left-color:var(--accent)}
+.step .eq{overflow-x:auto;overflow-y:hidden}
+.step .katex-display{margin:.35em 0;font-size:1.08em}
+.step .katex-display>.katex{text-align:left}
+.why{font-size:.92rem;color:var(--ink-2);border-left:1px solid var(--rule);padding-left:1rem}
+.why b{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.step.text{grid-template-columns:1fr}
+
+/* Tablas */
+table.t{border-collapse:collapse;width:100%;font-size:.95rem}
+table.t th,table.t td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.t th{font-weight:600;color:var(--ink-2);font-size:.9rem;border-bottom:1.5px solid var(--ink-2)}
+table.t td:first-child{color:var(--ink-2)}
+.tscroll{overflow-x:auto}
+
+/* Detalles colapsables */
+details.more{border-top:1px solid var(--rule);margin-top:.8rem;padding-top:.3rem}
+details.more summary{cursor:pointer;color:var(--accent);font-size:.9rem;list-style:none;display:inline-flex;align-items:center;gap:.4rem}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"";width:.45rem;height:.45rem;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+details.more[open] summary::before{transform:rotate(45deg)}
+details.more .body{padding:.4rem 0 .2rem 1rem;font-size:.93rem;color:var(--ink-2)}
+
+/* Tooltips */
+.tip{border-bottom:1px dotted var(--accent);cursor:help;position:relative}
+.tip .tipbody{display:none;position:absolute;left:0;top:100%;margin-top:.4rem;z-index:30;width:24rem;max-width:70vw;background:var(--ink);color:#f3f3f1;padding:.7rem .9rem;font-size:.85rem;line-height:1.45;font-weight:normal;font-style:normal;text-transform:none;letter-spacing:0;border-radius:2px}
+.tip:hover .tipbody,.tip:focus .tipbody{display:block}
+
+/* Botones */
+.btn{border:1px solid var(--rule);background:var(--surface);padding:.35rem .8rem;cursor:pointer;font-size:.86rem;border-radius:2px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.controls label{font-size:.86rem;color:var(--ink-2);display:flex;align-items:center;gap:.5rem}
+input[type=range]{accent-color:var(--accent);width:11rem}
+.readout{font-size:.95rem;color:var(--ink-2);margin:.4rem 0}
+.readout .v{color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* Figuras */
+figure{margin:.4rem 0}
+figure svg{width:100%;height:auto;display:block}
+figure svg.tall{height:min(50vh,27rem)}
+figcaption{font-size:.86rem;color:var(--ink-2);margin-top:.35rem}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-size:.86rem;color:var(--ink-2);margin:.3rem 0}
+.lg{display:inline-flex;align-items:center;gap:.4rem}
+.legend svg{width:34px;height:16px;flex:none}
+svg{fill:var(--ink-2)}
+svg text{font-family:var(--sans)}
+svg .tick{font-size:12px;fill:var(--muted)}
+svg .alabel{font-size:13px;fill:var(--ink-2)}
+svg .dlabel{font-size:12.5px;fill:var(--ink-2)}
+svg .grid{stroke:#e6e3dd;stroke-width:1}
+svg .axis{stroke:#a9a6a0;stroke-width:1}
+.s-acc{stroke:var(--accent);stroke-width:2.4;fill:none}
+.s-ink{stroke:var(--series-2);stroke-width:2;fill:none;stroke-dasharray:7 5}
+.s-ink-solid{stroke:var(--series-2);stroke-width:2;fill:none}
+.s-ref{stroke:var(--muted);stroke-width:1.3;fill:none;stroke-dasharray:3 4}
+.s-ref2{stroke:var(--muted);stroke-width:1.3;fill:none;stroke-dasharray:9 5}
+.m-acc{fill:var(--accent);stroke:var(--surface);stroke-width:1.5}
+.m-ink{fill:var(--series-2);stroke:var(--surface);stroke-width:1.5}
+.m-hollow{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+.m-dim{fill:var(--series-2);opacity:.55}
+.band{fill:var(--accent-soft)}
+
+/* Portada / índice */
+.cover{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:4rem;align-items:start;padding-top:2rem}
+.cover h1{font-size:2.9rem;margin:.4rem 0 .8rem}
+.cover .sub{font-family:var(--serif);font-size:1.25rem;color:var(--ink-2)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule)}
+.card{display:grid;grid-template-columns:2.4rem 1fr;gap:.2rem .8rem;padding:1.05rem .9rem 1.05rem 0;border-bottom:1px solid var(--rule);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;text-align:left}
+.card:nth-child(odd){border-right:1px solid var(--rule);padding-right:1.4rem}
+.card:nth-child(even){padding-left:1.4rem}
+.card .n{grid-row:span 2;font-family:var(--serif);font-size:1.6rem;color:var(--accent);line-height:1.1}
+.card .t{font-family:var(--serif);font-size:1.22rem}
+.card .d{font-size:.88rem;color:var(--muted)}
+.card:hover .t{color:var(--accent)}
+.keys{font-size:.85rem;color:var(--muted);margin-top:1.8rem;line-height:1.9}
+kbd{font-family:var(--sans);font-size:.8em;border:1px solid var(--rule);border-bottom-width:2px;padding:.05rem .4rem;border-radius:3px;background:var(--surface);color:var(--ink-2)}
+
+/* Pie */
+#foot{position:fixed;left:0;right:0;bottom:0;height:var(--foot);overflow-x:auto;display:flex;align-items:center;gap:1rem;padding:0 1.2rem;border-top:1px solid var(--rule);background:var(--bg);font-size:.82rem;color:var(--muted);z-index:20}
+#foot .secnav{display:flex;gap:.15rem}
+#foot .secnav button{white-space:nowrap;border:0;background:none;padding:.3rem .55rem;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent}
+#foot .secnav button.cur{color:var(--accent-ink);border-bottom-color:var(--accent)}
+#foot .secnav button:hover{color:var(--ink)}
+#foot .spacer{flex:1}
+#foot .ibtn{border:0;background:none;cursor:pointer;padding:.3rem;color:var(--muted);display:inline-flex}
+#foot .ibtn:hover,#foot .ibtn.on{color:var(--accent)}
+#foot .ibtn svg{width:1.15rem;height:1.15rem;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#count{font-variant-numeric:tabular-nums;min-width:4.5rem;text-align:right}
+#bar{position:fixed;left:0;bottom:var(--foot);height:2px;background:var(--accent);width:0;transition:width .2s;z-index:21}
+
+/* Notas del expositor */
+.notes{display:none}
+#notes-panel{position:fixed;left:0;right:0;bottom:var(--foot);max-height:34vh;overflow:auto;background:var(--surface);border-top:1px solid var(--rule);padding:.9rem 4rem 1rem;font-size:.95rem;color:var(--ink-2);z-index:19;display:none}
+#notes-panel.show{display:block}
+#notes-panel .label{margin-bottom:.3rem}
+
+/* Superposiciones: índice y ayuda */
+.overlay{position:fixed;inset:0;background:var(--bg);z-index:40;display:none;overflow:auto;padding:2.5rem 4rem}
+.overlay.show{display:block}
+.overlay h2{margin-bottom:1.3rem}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:1.6rem 2.4rem}
+.menu-sec h3{font-size:1.15rem;cursor:pointer;border-bottom:1px solid var(--rule);padding-bottom:.35rem;display:flex;gap:.6rem;align-items:baseline}
+.menu-sec h3 .n{color:var(--accent);font-size:.95rem}
+.menu-sec h3:hover{color:var(--accent)}
+.menu-sec ol{margin:.4rem 0;padding-left:1.4rem;font-size:.9rem;color:var(--ink-2)}
+.menu-sec li{cursor:pointer;padding:.12rem 0}
+.menu-sec li:hover{color:var(--accent)}
+.menu-sec li.cur{color:var(--accent-ink);font-weight:600}
+.close{position:absolute;top:1.4rem;right:2rem}
+#toast{position:fixed;left:50%;bottom:calc(var(--foot) + 1rem);transform:translateX(-50%);background:var(--ink);color:#f3f3f1;padding:.5rem 1rem;font-size:.85rem;border-radius:2px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+#toast.show{opacity:1}
+#katex-warn{display:none;position:fixed;top:0;left:0;right:0;background:#f3e9d2;color:#5a4a1e;font-size:.85rem;padding:.35rem 1rem;z-index:60}
+
+@media (max-width:900px){
+  .slide{padding:1.4rem 1.1rem 1rem}
+  .cols,.cols.wide-r,.cols.three,.cover{grid-template-columns:1fr;gap:1.4rem}
+  .step{grid-template-columns:1fr;gap:.2rem}
+  .why{border-left:0;padding-left:0}
+  .cards{grid-template-columns:1fr}
+  .card:nth-child(odd){border-right:0;padding-right:0}
+  .card:nth-child(even){padding-left:0}
+  #foot .secnav button{padding:.3rem .3rem}
+  #foot .brand{display:none}
+  .overlay{padding:1.5rem 1.1rem}
+  #notes-panel{padding:.8rem 1.1rem}
+}
+</style>
+</head>
+<body>
+<div id="katex-warn">KaTeX no se pudo cargar (¿sin conexión?): las fórmulas se muestran como texto fuente.</div>
+<main id="deck">
+
+<!-- =============================================================== PORTADA / ÍNDICE -->
+<section class="slide" data-sec="inicio" data-title="Portada e índice">
+ <div class="inner cover">
+  <div>
+   <div class="kicker">Teoría de la Generalización · Capítulo 5</div>
+   <h1>El compromiso sesgo–complejidad</h1>
+   <div class="sub"><i>The Bias–Complexity Trade-off</i></div>
+   <p class="small" style="margin-top:1.2rem">Basado en Shalev-Shwartz &amp; Ben-David, <i>Understanding Machine Learning: From Theory to Algorithms</i> (2014), cap. 5 y ejercicios de la sección 5.5.</p>
+   <div class="keys">
+    <kbd>1</kbd>–<kbd>6</kbd> ir a una sección · <kbd>←</kbd> <kbd>→</kbd> avanzar dentro de la sección<br>
+    <kbd>Esc</kbd> / <kbd>o</kbd> índice · <kbd>f</kbd> pantalla completa · <kbd>n</kbd> notas · <kbd>c</kbd> espacio para cámara · <kbd>?</kbd> ayuda
+   </div>
+  </div>
+  <div class="cards" id="cards"></div>
+ </div>
+ <aside class="notes">Presentar el hilo del capítulo: (1) NFL dice que no hay aprendiz universal, por eso necesitamos elegir una clase H (sesgo inductivo); (2) esa elección tiene un costo, que la descomposición del error separa en aproximación y estimación. Los ejercicios profundizan: Ej 1 cierra la prueba del NFL, Ej 2 aplica el trade-off, Ej 3 generaliza la cota.</aside>
+</section>
+
+<!-- =============================================================== 5.1 NFL -->
+<section class="slide" data-sec="s51" data-title="¿Existe un aprendiz universal?">
+ <div class="inner">
+  <h2>¿Existe un aprendiz universal?</h2>
+  <p class="lead">En los capítulos 2–4, ERM aprende siempre que fijemos de antemano una clase de hipótesis $\cH$ adecuada. ¿Podríamos ahorrarnos esa elección?</p>
+  <div class="box frag"><span class="lbl">Aprendiz universal (hipotético)</span>
+   Un algoritmo $A$ tal que, para <em>toda</em> distribución $\D$ sobre $\X\times\{0,1\}$, al recibir $S\sim\D^m$ devuelve un predictor con $L_\D(A(S))$ pequeño, con alta probabilidad — sin ningún supuesto sobre $\D$.
+  </div>
+  <div class="frag">
+   <p>Recordemos las dos piezas:</p>
+   <ul class="clean">
+    <li>Error verdadero: $L_\D(h)=\PP_{(x,y)\sim\D}\big[h(x)\neq y\big]$ &nbsp;(pérdida 0-1).</li>
+    <li>Aprendizaje <span class="tip" tabindex="0">PAC<span class="tipbody">Probably Approximately Correct: para todo $\epsilon,\delta\in(0,1)$ existe $m(\epsilon,\delta)$ tal que con $m\ge m(\epsilon,\delta)$ muestras, con probabilidad $\ge 1-\delta$ se cumple $L_\D(A(S))\le\epsilon$.</span></span>: con suficientes muestras, error $\le\epsilon$ con probabilidad $\ge 1-\delta$.</li>
+   </ul>
+  </div>
+  <p class="idea frag">Respuesta del teorema: <b>no</b>. Para cada algoritmo existe una tarea en la que falla, aunque esa misma tarea sea fácil para otro algoritmo.</p>
+ </div>
+ <aside class="notes">Motivar: un aprendiz universal sería el sueño: no pensar en el problema, solo dar datos. El NFL dice que eso no existe. Subrayar que el teorema habla de CUALQUIER algoritmo, no de uno en particular.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Enunciado del teorema">
+ <div class="inner">
+  <h2>Teorema 5.1 (No-Free-Lunch)</h2>
+  <div class="box"><span class="lbl">Enunciado</span>
+   Sea $A$ cualquier algoritmo de aprendizaje para clasificación binaria con pérdida 0-1 sobre un dominio $\X$. Sea $m$ cualquier número menor que $|\X|/2$, que representa el tamaño del conjunto de entrenamiento. Entonces existe una distribución $\D$ sobre $\X\times\{0,1\}$ tal que:
+   <ol style="margin:.5rem 0 0">
+    <li>Existe una función $f:\X\to\{0,1\}$ con $L_\D(f)=0$.</li>
+    <li>Con probabilidad de al menos $1/7$ sobre la elección de $S\sim\D^m$, se tiene $L_\D(A(S))\ge 1/8$.</li>
+   </ol>
+  </div>
+  <div class="cols three" style="margin-top:1.2rem">
+   <div class="frag"><h3>La tarea es fácil</h3><p>La parte 1 dice que $\D$ es <em class="hl">realizable</em>: una función la clasifica sin error.</p></div>
+   <div class="frag"><h3>Pero $A$ no la aprende</h3><p>La parte 2 niega PAC para $\epsilon\lt 1/8$, $\delta\lt 1/7$: con $m$ muestras, $A$ falla con probabilidad no despreciable.</p></div>
+   <div class="frag"><h3>Otro algoritmo sí</h3><p>ERM sobre $\cH=\{f\}$ tiene error $0$. El fracaso no es de la tarea: es de pedirle a $A$ que sirva para <em>todas</em>.</p></div>
+  </div>
+  <details class="more"><summary>ver detalle: ¿por qué la condición $m \lt |\X|/2$?</summary><div class="body">La prueba necesita un subconjunto $C\subseteq\X$ con $|C|=2m$, para que cualquier muestra de $m$ puntos deje al menos la mitad de $C$ sin ver. Si $m$ fuera comparable con $|\X|$, la muestra podría cubrir casi todo el dominio y el argumento no funcionaría. El Ejercicio 3 muestra que con dominios aún mayores ($|\X|\ge km$) la cota mejora.</div></details>
+ </div>
+ <aside class="notes">Leer el enunciado despacio. Las constantes 1/8 y 1/7 no son importantes en sí; lo importante es que son constantes que no dependen de m ni de A. El orden de los cuantificadores: para todo A, existe D. D depende de A.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Estrategia de la prueba">
+ <div class="inner">
+  <h2>Estrategia de la demostración</h2>
+  <ol class="road">
+   <li class="frag"><div><b>Construir todas las tareas sobre un dominio pequeño.</b> Tomar $C\subseteq\X$ con $|C|=2m$ y los $T=2^{2m}$ etiquetados posibles $f_1,\dots,f_T$, cada uno con su distribución $\D_i$.</div></li>
+   <li class="frag"><div><b>Máximo $\ge$ promedio.</b> Basta ver que el error esperado <i>promediado sobre los $f_i$</i> es $\ge 1/4$; entonces algún $f_i$ tiene error esperado $\ge 1/4$.</div></li>
+   <li class="frag"><div><b>Fijar la muestra.</b> Cualquier muestra de $m$ puntos deja al menos $m$ puntos de $C$ sin ver.</div></li>
+   <li class="frag"><div><b>Truco de parejas.</b> En un punto no visto, exactamente la mitad de los etiquetados hacen que $A$ se equivoque.</div></li>
+   <li class="frag"><div><b>De esperanza a probabilidad.</b> $\E[L]\ge 1/4$ implica $\PP[L\ge 1/8]\ge 1/7$ (Ejercicio 1).</div></li>
+  </ol>
+  <p class="idea frag">Idea en una frase: la muestra no dice nada sobre los puntos que no contiene; si todos los etiquetados son posibles, predecir ahí es lanzar una moneda.</p>
+ </div>
+ <aside class="notes">Dar el mapa antes de entrar en fórmulas. El paso 2 es la jugada clave: en lugar de encontrar el peor f directamente, promediamos. El paso 4 es donde está la intuición.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Construcción: dominio y distribuciones">
+ <div class="inner cols">
+  <div>
+   <h2>Paso 0 — la construcción</h2>
+   <ul class="clean">
+    <li>$C\subseteq\X$ con $|C|=2m$ &nbsp;<span class="small">(existe porque $|\X|\gt 2m$)</span>.</li>
+    <li>$T=2^{2m}$ funciones $f_1,\dots,f_T:C\to\{0,1\}$: <b>todos</b> los etiquetados.</li>
+    <li>Para cada $i$, la distribución
+     $$\D_i\big(\{(x,y)\}\big)=\begin{cases}1/|C| &amp; \text{si } y=f_i(x)\\ 0 &amp; \text{si no}\end{cases}$$
+     puntos uniformes en $C$, etiquetados por $f_i$.</li>
+   </ul>
+   <div class="step frag text"><div>Por construcción $L_{\D_i}(f_i)=0$: <b>la parte 1 del teorema vale para cada $i$</b>.</div></div>
+   <div class="box frag"><span class="lbl">Objetivo (5.1)</span>
+    $$\max_{i\in[T]}\ \E_{S\sim\D_i^m}\big[L_{\D_i}(A(S))\big]\ \ge\ \frac14$$
+   </div>
+  </div>
+  <div>
+   <figure>
+    <svg id="w-grid"></svg>
+    <figcaption id="w-grid-read"></figcaption>
+   </figure>
+   <div class="controls">
+    <button class="btn" id="w-grid-f">Nuevo etiquetado $f_i$</button>
+    <button class="btn" id="w-grid-s">Nueva muestra $S$</button>
+    <button class="btn" id="w-grid-v">Ver como el algoritmo</button>
+   </div>
+   <p class="small">Relleno = etiqueta 1; vacío = etiqueta 0. Los puntos marcados abajo están en la muestra. En "ver como el algoritmo" solo quedan visibles las etiquetas de la muestra.</p>
+  </div>
+ </div>
+ <aside class="notes">Ejemplo con m = 6: 12 puntos, 4096 etiquetados. Mostrar con "nueva muestra" que siempre quedan al menos 6 puntos sin ver (muestreo con reemplazo puede repetir). Con "ver como el algoritmo": para los puntos con signo de pregunta, la muestra no da ninguna información.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Paso 1: la esperanza como promedio finito">
+ <div class="inner">
+  <h2>Paso 1 — la esperanza es un promedio finito</h2>
+  <p>Hay $k=(2m)^m$ secuencias posibles $S_1,\dots,S_k$ de $m$ puntos de $C$. Escribimos $S_j^i$ para la secuencia $S_j$ etiquetada por $f_i$: $\;S_j^i=\big((x_1,f_i(x_1)),\dots,(x_m,f_i(x_m))\big)$.</p>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\E_{S\sim\D_i^m}\big[L_{\D_i}(A(S))\big]=\frac1k\sum_{j=1}^{k}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>por qué</b>Bajo $\D_i$ cada punto es uniforme en $C$ y su etiqueta queda fijada por $f_i$. Las $m$ extracciones son independientes, así que cada secuencia tiene probabilidad $(1/2m)^m=1/k$.</div></div>
+  </div>
+  <p class="frag note">Las muestras posibles bajo $\D_i$ son exactamente $S_1^i,\dots,S_k^i$: <b>los mismos puntos para todo $i$</b>, solo cambian las etiquetas. Esa estructura común es la que explotan los pasos siguientes.
+   <span class="tip" tabindex="0">Aviso de notación<span class="tipbody">Aquí $k=(2m)^m$ cuenta secuencias (notación del libro). No confundir con el $k$ del Ejercicio 3, que mide el tamaño del dominio.</span></span></p>
+ </div>
+ <aside class="notes">Aquí solo reescribimos la esperanza como un promedio. La justificación: distribución uniforme e independencia. Insistir en que los x_j son los mismos para todos los i.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Paso 2: máximo ≥ promedio ≥ mínimo">
+ <div class="inner">
+  <h2>Paso 2 — máximo $\ge$ promedio $\ge$ mínimo</h2>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\max_{i\in[T]}\ \frac1k\sum_{j=1}^{k}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>punto de partida</b>El lado izquierdo de (5.1), usando el Paso 1.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac1T\sum_{i=1}^{T}\frac1k\sum_{j=1}^{k}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>por qué</b>El máximo de $T$ números es al menos su promedio.</div></div>
+   <div class="step frag"><div class="eq">$$=\ \frac1k\sum_{j=1}^{k}\frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>por qué</b>Son sumas finitas: podemos intercambiar el orden.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \min_{j\in[k]}\ \frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>por qué</b>El promedio de $k$ números es al menos su mínimo.</div></div>
+  </div>
+  <p class="idea frag">Queda por probar: para <b>cada secuencia fija</b> $S_j$, el error promediado sobre todos los etiquetados es $\ge 1/4$.</p>
+ </div>
+ <aside class="notes">La jugada: no buscamos el peor f explícitamente. Pasamos del máximo al promedio sobre f (lo que es más fácil de calcular), y al intercambiar sumas dejamos la muestra fija por fuera. Ahora lo único que varía es el etiquetado.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Paso 3: los puntos no vistos">
+ <div class="inner">
+  <h2>Paso 3 — fijar la muestra y mirar los puntos no vistos</h2>
+  <p>Fijamos $j$. Sea $S_j=(x_1,\dots,x_m)$ y sean $v_1,\dots,v_p$ los puntos de $C$ que <b>no</b> aparecen en $S_j$.</p>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$p\ \ge\ m$$</div>
+    <div class="why"><b>por qué</b>$|C|=2m$ y la secuencia tiene a lo sumo $m$ puntos distintos.</div></div>
+   <div class="step frag"><div class="eq">$$L_{\D_i}(h)=\frac1{2m}\sum_{x\in C}\mathbf 1\big[h(x)\neq f_i(x)\big]$$</div>
+    <div class="why"><b>por qué</b>$\D_i$ es uniforme en $C$ y etiqueta con $f_i$: el error es la fracción de puntos de $C$ mal clasificados. Vale para cualquier $h:C\to\{0,1\}$.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac1{2m}\sum_{r=1}^{p}\mathbf 1\big[h(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>Quitamos los términos de los puntos vistos; todos son $\ge 0$.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac1{2p}\sum_{r=1}^{p}\mathbf 1\big[h(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>$p\ge m\ \Rightarrow\ \frac1{2m}\ge\frac1{2p}$.</div></div>
+  </div>
+ </div>
+ <aside class="notes">Aquí aparece la idea central: solo contamos errores en los puntos que el algoritmo no vio. Cambiar 1/(2m) por 1/(2p) sirve para que después aparezca un promedio sobre los p puntos no vistos.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Paso 3 (cont.): promediar sobre etiquetados">
+ <div class="inner">
+  <h2>Paso 3 (cont.) — promediar sobre los etiquetados</h2>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)\ \ge\ \frac1T\sum_{i=1}^{T}\frac1{2p}\sum_{r=1}^{p}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>Aplicamos la cota anterior con $h=A(S_j^i)$ para cada $i$.</div></div>
+   <div class="step frag"><div class="eq">$$=\ \frac1{2p}\sum_{r=1}^{p}\ \frac1T\sum_{i=1}^{T}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>Intercambio de sumas finitas.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac12\cdot\min_{r\in[p]}\ \frac1T\sum_{i=1}^{T}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>$\frac1{2p}\sum_{r=1}^p a_r=\frac12\cdot\big(\text{promedio de los } a_r\big)\ge\frac12\min_r a_r$.</div></div>
+  </div>
+  <p class="idea frag">Falta: para cada punto no visto $v_r$, la fracción de etiquetados en que $A$ falla en $v_r$ es exactamente $\tfrac12$.</p>
+ </div>
+ <aside class="notes">Mismo patrón que el paso 2: intercambiar sumas y acotar un promedio por un mínimo. Ahora la cantidad a estudiar es muy concreta: fijo un punto no visto, ¿en cuántos etiquetados falla A en ese punto?</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Paso 4: el truco de parejas">
+ <div class="inner cols">
+  <div>
+   <h2>Paso 4 — el truco de parejas</h2>
+   <p>Fijamos $r$. Agrupamos los $T$ etiquetados en $T/2$ parejas $(f_i,f_{i'})$ que coinciden en todo $C$ <b>salvo en $v_r$</b>.</p>
+   <div class="steps">
+    <div class="step frag text"><div>$v_r\notin S_j\ \Rightarrow\ S_j^i=S_j^{i'}$ &nbsp;<span class="small">(mismos puntos, mismas etiquetas en ellos)</span></div></div>
+    <div class="step frag text"><div>$\Rightarrow\ A(S_j^i)=A(S_j^{i'})$ &nbsp;<span class="small">(misma entrada, misma salida $h$)</span></div></div>
+    <div class="step frag text"><div>$f_i(v_r)\neq f_{i'}(v_r)$, así que $h(v_r)$ acierta exactamente a uno:
+     $$\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]+\mathbf 1\big[A(S_j^{i'})(v_r)\neq f_{i'}(v_r)\big]=1$$</div></div>
+    <div class="step frag text"><div>Sumando sobre las $T/2$ parejas:
+     $$\frac1T\sum_{i=1}^{T}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]=\frac1T\cdot\frac T2=\frac12$$</div></div>
+   </div>
+  </div>
+  <div>
+   <figure>
+    <svg id="w-pairs"></svg>
+    <figcaption id="w-pairs-read"></figcaption>
+   </figure>
+   <div class="controls">
+    <button class="btn" id="w-pairs-h">Cambiar $h(v_r)$</button>
+    <button class="btn" id="w-pairs-f">Otra pareja</button>
+   </div>
+   <p class="small">Haz clic en cualquier punto no visto para elegir $v_r$. Las columnas sombreadas son la muestra: ahí ambos etiquetados coinciden.</p>
+  </div>
+ </div>
+ <aside class="notes">Este es el corazón de la prueba. El algoritmo puede ser tan inteligente como quiera, pero recibe exactamente la misma entrada en los dos mundos (f_i y f_i'), así que devuelve lo mismo. En v_r los dos mundos no coinciden, luego falla en uno. Probar el botón: cambie lo que cambie h(v_r), siempre hay exactamente un error.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Cierre de la demostración">
+ <div class="inner">
+  <h2>Cierre: juntar las piezas</h2>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\max_{i\in[T]}\E_{S\sim\D_i^m}\big[L_{\D_i}(A(S))\big]\ \ge\ \min_{j\in[k]}\frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)\ \ge\ \frac12\cdot\frac12=\frac14\qquad(5.1)$$</div>
+    <div class="why"><b>por qué</b>Paso 2, luego Paso 3 con el mínimo sobre $r$ igual a $\tfrac12$ (Paso 4).</div></div>
+   <div class="step frag"><div class="eq">$$\exists\,\D\ \text{y}\ f\ \text{con}\ L_\D(f)=0\quad\text{y}\quad\E_{S\sim\D^m}\big[L_\D(A(S))\big]\ge\frac14\qquad(5.2)$$</div>
+    <div class="why"><b>por qué</b>Tomamos el $\D_i$ que alcanza el máximo, extendido a $\X\times\{0,1\}$ con probabilidad $0$ fuera de $C$.</div></div>
+   <div class="step frag"><div class="eq">$$\PP_{S\sim\D^m}\Big[L_\D(A(S))\ge\frac18\Big]\ \ge\ \frac17$$</div>
+    <div class="why"><b>por qué</b>Una variable en $[0,1]$ con esperanza $\ge 1/4$: Lema B.1. Es el <a href="#e1-1" class="jump" data-sec="e1">Ejercicio 1</a>. $\;\blacksquare$</div></div>
+  </div>
+  <details class="more"><summary>ver detalle: $A$ trabaja sobre $\X$, no sobre $C$</summary><div class="body">Como $\D$ pone toda su masa en $C$, las muestras solo contienen puntos de $C$ y $L_\D(h)$ solo depende de los valores de $h$ en $C$. Por eso basta analizar la restricción de $A(S)$ a $C$; el libro lo formula con algoritmos $A'$ que devuelven funciones $C\to\{0,1\}$.</div></details>
+ </div>
+ <aside class="notes">Resumir la cadena. Hacer notar que (5.1) es una afirmación sobre esperanzas; el teorema pide una probabilidad, y ese último paso es exactamente el Ejercicio 1.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Qué enseña: sesgo inductivo">
+ <div class="inner cols">
+  <div>
+   <h2>Qué enseña el teorema</h2>
+   <ul class="clean">
+    <li class="frag">El error viene <b>solo de los puntos no vistos</b>. Sin supuestos sobre $\D$, la muestra no informa nada sobre ellos.</li>
+    <li class="frag"><b>Sesgo inductivo</b> = conocimiento previo que restringe los etiquetados posibles. La forma estándar: elegir una clase $\cH$ antes de ver los datos.</li>
+    <li class="frag">Con una $\cH$ adecuada (p. ej. finita), ERM aprende. Pero si $\cH$ no contiene un buen predictor, pagamos <b>error de aproximación</b> (sección 5.2).</li>
+    <li class="frag">No dice "aprender es imposible". Dice: <em class="hl">aprender sin sesgo es imposible</em>.</li>
+   </ul>
+  </div>
+  <div class="frag">
+   <div class="box"><span class="lbl">Corolario 5.2</span>
+    Sea $\X$ un dominio infinito y $\cH$ el conjunto de <b>todas</b> las funciones $\X\to\{0,1\}$. Entonces $\cH$ no es PAC-aprendible.
+   </div>
+   <details class="more"><summary>ver prueba</summary><div class="body">
+    Supongamos que sí, con algoritmo $A$ y complejidad $m_\cH(\epsilon,\delta)$. Tomamos $\epsilon\lt 1/8$, $\delta\lt 1/7$ y $m=m_\cH(\epsilon,\delta)$. Como $\X$ es infinito, $m\lt|\X|/2$ y el NFL da un $\D$ realizable por algún $f\in\cH$ (toda función está en $\cH$) con
+    $\PP[L_\D(A(S))\ge 1/8]\ge 1/7\gt\delta$. Pero PAC exige $\PP[L_\D(A(S))\gt\epsilon]\le\delta$, y $1/8\gt\epsilon$. Contradicción.
+   </div></details>
+  </div>
+ </div>
+ <aside class="notes">Conectar con la elección de H: la clase de hipótesis es precisamente el sesgo. El corolario formaliza que la clase "sin sesgo" (todas las funciones) no se puede aprender. Esto motiva la sección 5.2: elegir H tiene un costo.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Simulación: dominio finito">
+ <div class="inner cols wide-r">
+  <div>
+   <h2>Simulación en Python</h2>
+   <p><b>Pregunta.</b> ¿Un algoritmo concreto va bien en todos los etiquetados de un dominio finito?</p>
+   <p class="small">Montaje: $m=4$, $|C|=8$, los $T=256$ etiquetados; 4000 muestras $S$ por etiquetado. Algoritmo: memoriza lo visto y predice una etiqueta fija en lo no visto.</p>
+   <div class="tscroll"><table class="t" id="t-nfl"></table></div>
+   <ul class="clean frag">
+    <li>Bien en unos etiquetados (error $0$ si $f\equiv 0$), mal en otros (≈ 0.59 si $f\equiv 1$).</li>
+    <li>El <b>promedio</b> sobre los $f_i$ es el mismo para todos: ≈ 0.293 $\ge 1/4$. Es el truco de parejas.</li>
+    <li>≈ 0.293 y no 0.25: con reemplazo quedan en promedio $2m(1-\tfrac1{2m})^m\gt m$ puntos sin ver.</li>
+   </ul>
+  </div>
+  <figure>
+   <svg id="c-nfl"></svg>
+   <div class="legend" id="c-nfl-lg"></div>
+   <figcaption>Error esperado $\E_S[L_{\D_i}(A(S))]$ de "memoriza + predice 0" en cada etiquetado, agrupado por cuántos puntos etiqueta $f_i$ con 1.</figcaption>
+  </figure>
+ </div>
+ <p class="inner note">La simulación ilustra (tres algoritmos, $m=4$); no demuestra. La generalidad —todo algoritmo, todo $m$— la da la prueba. Código: <code>simulaciones.ipynb</code>, sección 1.</p>
+ <aside class="notes">Leer la figura: el error crece linealmente con el número de unos porque el algoritmo apuesta por 0 en lo no visto. Luego la tabla: predecir 0, 1 o voto mayoritario da exactamente el mismo promedio. Ningún truco en los no vistos sirve.</aside>
+</section>
+
+<section class="slide" data-sec="s51" data-title="Resumen 5.1">
+ <div class="inner">
+  <h2>Resumen — No-Free-Lunch</h2>
+  <ol class="road">
+   <li><div>Para todo algoritmo $A$ y $m\lt|\X|/2$ hay una tarea <b>realizable</b> en la que $A$ tiene error $\ge 1/8$ con probabilidad $\ge 1/7$.</div></li>
+   <li><div>Prueba: todos los etiquetados de $2m$ puntos; máximo $\ge$ promedio; en cada punto no visto, las parejas de etiquetados hacen fallar a $A$ la mitad de las veces.</div></li>
+   <li><div>Consecuencia: hace falta <b>sesgo inductivo</b> (elegir $\cH$). Esa elección tiene un precio: la descomposición del error.</div></li>
+  </ol>
+  <div class="controls" style="margin-top:1.4rem"><button class="btn jump" data-sec="s52">Siguiente: 5.2 Descomposición del error</button><button class="btn jump" data-sec="e1">Ejercicio 1</button><button class="btn jump" data-sec="inicio">Índice</button></div>
+ </div>
+ <aside class="notes">Cerrar con la idea: no hay almuerzo gratis. Si el profesor pide saltar, usar los botones o las teclas 1–6.</aside>
+</section>
+
+<!-- =============================================================== 5.2 -->
+<section class="slide" data-sec="s52" data-title="La pregunta">
+ <div class="inner">
+  <h2>¿Cuánto cuesta elegir una clase $\cH$?</h2>
+  <p class="lead">El NFL obliga a elegir una clase de hipótesis. Aprendemos con ERM: $\ h_S\in\mathrm{ERM}_\cH(S)=\arg\min_{h\in\cH}L_S(h)$.</p>
+  <div class="cols" style="margin-top:1rem">
+   <div class="frag"><h3>Dos fuentes de error</h3>
+    <ul class="clean"><li>La clase puede no contener un buen predictor.</li><li>Aun conteniéndolo, con $m$ finito ERM puede no encontrarlo: minimiza $L_S$, no $L_\D$.</li></ul></div>
+   <div class="frag"><h3>Tensión</h3>
+    <p>Agrandar $\cH$ ataca la primera fuente pero empeora la segunda. La descomposición del error hace precisa esta tensión.</p></div>
+  </div>
+  <details class="more"><summary>ver detalle: notación</summary><div class="body">$L_S(h)=\frac1m\sum_{t=1}^m\mathbf 1[h(x_t)\neq y_t]$ es el error empírico; $L_\D(h)$ el verdadero. ERM elige la hipótesis de menor error empírico dentro de $\cH$.</div></details>
+ </div>
+ <aside class="notes">Transición desde el NFL: ya sabemos que necesitamos H. Ahora: cuánto error nos cuesta esa elección y cómo depende de la complejidad y del tamaño de muestra.</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="La descomposición">
+ <div class="inner">
+  <h2>La descomposición del error</h2>
+  <div class="box">
+   $$L_\D(h_S)=\eapp+\eest,\qquad \eapp=\min_{h\in\cH}L_\D(h),\qquad \eest=L_\D(h_S)-\eapp$$
+  </div>
+  <div class="steps">
+   <div class="step frag"><div>Es una <b>identidad</b>: sumar y restar $\min_{h\in\cH}L_\D(h)$. Su valor está en la interpretación de cada término.</div>
+    <div class="why"><b>por qué</b>No hay nada que demostrar; lo importante es qué controla cada parte.</div></div>
+   <div class="step frag"><div>Ambos son $\ge 0$: $\ \eest\ge 0$ porque $h_S\in\cH$ y $\eapp$ es el mínimo sobre $\cH$.</div>
+    <div class="why"><b>por qué</b>Ningún elemento de $\cH$ tiene error menor que el mínimo.</div></div>
+  </div>
+  <figure class="frag" style="margin-top:1rem;max-width:46rem">
+   <svg id="w-stack"></svg>
+   <figcaption>El error total, partido en sus dos términos. El error de Bayes (el mínimo sobre <i>todas</i> las funciones) forma parte de $\eapp$ y no depende de $\cH$.</figcaption>
+  </figure>
+ </div>
+ <aside class="notes">Explicar que es trivial algebraicamente, pero separa dos cosas: lo que depende solo de H y D (aproximación) y lo que depende además de la muestra (estimación).</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="Error de aproximación">
+ <div class="inner cols">
+  <div>
+   <h2>Error de aproximación $\ \eapp=\min_{h\in\cH}L_\D(h)$</h2>
+   <ul class="clean">
+    <li class="frag">El error del <b>mejor</b> predictor de la clase: lo que perdemos por restringirnos a $\cH$.</li>
+    <li class="frag"><b>No depende de $S$ ni de $m$.</b> Ni con infinitos datos baja.</li>
+    <li class="frag">Si $\cH\subseteq\cH'$ entonces $\eapp(\cH')\le\eapp(\cH)$: un mínimo sobre un conjunto mayor no puede ser mayor.</li>
+    <li class="frag">Bajo realizabilidad, $\eapp=0$. En el caso agnóstico, $\eapp\ge L_\D(f_\D)$ (error de Bayes): el ruido no lo explica ninguna clase.</li>
+   </ul>
+  </div>
+  <div class="frag">
+   <div class="box"><span class="lbl">Lectura</span>Es el término de <b>sesgo</b> (<i>bias</i>): mide qué tan buena fue la elección previa de $\cH$. Clase pobre $\Rightarrow$ <i>underfitting</i>.</div>
+  </div>
+ </div>
+ <aside class="notes">El error de aproximación depende de la elección de H y de D. Es un límite inferior para lo que se puede lograr con esa clase, sin importar cuántos datos haya.</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="Error de estimación">
+ <div class="inner cols">
+  <div>
+   <h2>Error de estimación $\ \eest=L_\D(h_S)-\eapp$</h2>
+   <ul class="clean">
+    <li class="frag">Aparece porque ERM minimiza $L_S$, que solo <b>estima</b> $L_\D$.</li>
+    <li class="frag">Depende de $m$ (baja al crecer) y de la <b>complejidad</b> de $\cH$ (sube al crecer).</li>
+    <li class="frag">Para $\cH$ finita (cap. 4), con probabilidad $\ge 1-\delta$:
+     $$\eest\ \le\ \sqrt{\frac{2\log(2|\cH|/\delta)}{m}}$$</li>
+   </ul>
+   <details class="more"><summary>ver derivación</summary><div class="body">
+    Si $S$ es $\tfrac\epsilon2$-representativa ($|L_S(h)-L_\D(h)|\le\tfrac\epsilon2$ para todo $h\in\cH$) y $h^\star\in\arg\min_\cH L_\D$:
+    $$L_\D(h_S)\le L_S(h_S)+\tfrac\epsilon2\le L_S(h^\star)+\tfrac\epsilon2\le L_\D(h^\star)+\epsilon.$$
+    Por Hoeffding y la cota de la unión, $S$ es $\tfrac\epsilon2$-representativa con probabilidad $\ge 1-\delta$ si $m\ge\frac{2\log(2|\cH|/\delta)}{\epsilon^2}$. Despejando $\epsilon$ se obtiene la cota.
+   </div></details>
+  </div>
+  <div class="frag">
+   <div class="box"><span class="lbl">Lectura</span>Es el término de <b>complejidad</b>: crece como $\log|\cH|$ y decrece como $1/\sqrt m$. Clase demasiado rica para los datos $\Rightarrow$ <i>overfitting</i>.</div>
+  </div>
+ </div>
+ <aside class="notes">El error de estimación es el precio de no conocer D. La cota de clases finitas muestra las dos dependencias: log|H| arriba, m abajo. Para clases infinitas el papel de log|H| lo toma la dimensión VC (cap. 6).</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="El compromiso">
+ <div class="inner cols wide-r">
+  <div>
+   <h2>El compromiso sesgo–complejidad</h2>
+   <ul class="clean">
+    <li>Al aumentar la complejidad de $\cH$: <b>$\eapp$ baja</b> y <b>$\eest$ sube</b>.</li>
+    <li>La suma tiene un mínimo: una complejidad intermedia.</li>
+    <li class="frag">Más datos bajan la curva de estimación: el mínimo se mueve hacia clases más ricas.</li>
+   </ul>
+   <div class="controls">
+    <label>complejidad <input type="range" id="w-to-c" min="0" max="100" value="35"></label>
+    <label>muestras $m$ <input type="range" id="w-to-m" min="0" max="6" value="2"></label>
+   </div>
+   <div class="readout" id="w-to-read"></div>
+   <p class="small">Curvas esquemáticas (no son datos): sirven para leer la forma del compromiso. Los datos reales están en la simulación.</p>
+  </div>
+  <figure>
+   <svg id="w-to"></svg>
+   <div class="legend" id="w-to-lg"></div>
+  </figure>
+ </div>
+ <aside class="notes">Mover el deslizador de complejidad: a la izquierda domina la aproximación (underfitting), a la derecha la estimación (overfitting). Luego mover m: con más datos el óptimo se corre a la derecha.</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="Relación formal con el trade-off">
+ <div class="inner">
+  <h2>La relación formal</h2>
+  <p>Para $\cH$ finita, con probabilidad $\ge 1-\delta$:</p>
+  <div class="box">
+   $$L_\D(h_S)\ \le\ \underbrace{\min_{h\in\cH}L_\D(h)}_{\text{baja al crecer }\cH}\ +\ \underbrace{\sqrt{\frac{2\log(2|\cH|/\delta)}{m}}}_{\text{sube al crecer }\cH,\ \text{baja al crecer }m}$$
+  </div>
+  <div class="cols" style="margin-top:.8rem">
+   <div class="frag"><h3>Extremo 1: $\cH=\{h_0\}$</h3><p>$\eest=0$ (no hay nada que estimar), pero $\eapp=L_\D(h_0)$ puede ser enorme. Sesgo máximo.</p></div>
+   <div class="frag"><h3>Extremo 2: todas las funciones</h3><p>$\eapp$ es el error de Bayes, el menor posible; pero por el NFL, $\eest$ no se controla con $m$ finito. Complejidad máxima.</p></div>
+  </div>
+  <p class="idea frag">Elegir $\cH$ es elegir un punto entre ambos extremos. Esa elección es el sesgo inductivo que el NFL exige.</p>
+ </div>
+ <aside class="notes">Los dos extremos conectan con el NFL: la clase de todas las funciones es exactamente la que el corolario 5.2 declara no aprendible. El trade-off no se resuelve con una fórmula universal: depende del conocimiento previo sobre el problema.</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="Simulación: clases de complejidad creciente">
+ <div class="inner">
+  <h2>Simulación en Python</h2>
+  <p><b>Pregunta.</b> ¿Cómo cambian $\eapp$, $\eest$ y el error de entrenamiento al hacer $\cH$ más compleja? &nbsp;<span class="small">$x\sim U[0,1]$, etiqueta con 15 % de ruido, $m=100$; $\cH_K$ = funciones constantes en $K$ celdas iguales ($|\cH_K|=2^K$), ERM = voto por celda; 300 repeticiones.</span></p>
+  <div class="cols">
+   <figure><svg id="c-dec-a"></svg><div class="legend" id="c-dec-a-lg"></div><figcaption>(a) Entrenamiento vs. error verdadero.</figcaption></figure>
+   <figure><svg id="c-dec-b"></svg><div class="legend" id="c-dec-b-lg"></div><figcaption>(b) Descomposición: $L_\D(h_S)=\eapp+\eest$.</figcaption></figure>
+  </div>
+  <ul class="clean frag small" style="font-size:.9rem">
+   <li>$\eapp$ no crece con $K$ (clases anidadas) y se acerca al error de Bayes $0.15$. $\eest$ crece: con $m/K$ puntos por celda el voto lo decide el ruido.</li>
+   <li>$L_S(h_S)$ baja siempre; $L_\D(h_S)$ tiene forma de U con mínimo en $K=16$. Izquierda: underfitting. Derecha: overfitting. Ilustra el compromiso; los números concretos dependen de este montaje (notebook, sección 2).</li>
+  </ul>
+ </div>
+ <aside class="notes">Panel (a): el error de entrenamiento engaña, siempre baja. Panel (b): la suma de aproximación y estimación reproduce la U. En el notebook también se ve que con m = 1000 el mejor K pasa a 64.</aside>
+</section>
+
+<section class="slide" data-sec="s52" data-title="Resumen 5.2">
+ <div class="inner">
+  <h2>Resumen — descomposición del error</h2>
+  <ol class="road">
+   <li><div>$L_\D(h_S)=\eapp+\eest$: aproximación (sesgo de la clase) + estimación (precio de tener solo $m$ muestras).</div></li>
+   <li><div>Clase más rica: $\eapp\downarrow$, $\eest\uparrow$. Más datos: $\eest\downarrow$, $\eapp$ igual.</div></li>
+   <li><div>El mejor $\cH$ equilibra ambos: ni la clase mínima ni la clase de todas las funciones (NFL).</div></li>
+  </ol>
+  <div class="controls" style="margin-top:1.4rem"><button class="btn jump" data-sec="e2">Aplicación: Ejercicio 2</button><button class="btn jump" data-sec="inicio">Índice</button></div>
+ </div>
+ <aside class="notes">Cerrar enlazando con el Ejercicio 2, que es un caso concreto del compromiso.</aside>
+</section>
+
+<!-- =============================================================== EJERCICIO 1 -->
+<section class="slide" data-sec="e1" data-title="Enunciado">
+ <div class="inner">
+  <h2>Ejercicio 1 — de la esperanza a la probabilidad</h2>
+  <div class="quote"><span class="lbl">Enunciado (sección 5.5)</span>
+   1. Prove that Equation (5.2) suffices for showing that
+   $$\PP\big[L_\D(A(S))\ge 1/8\big]\ge 1/7.$$
+   <i>Hint:</i> Let $\theta$ be a random variable that receives values in $[0,1]$ and whose expectation satisfies $\E[\theta]\ge 1/4$. Use Lemma B.1 to show that $\PP[\theta\ge 1/8]\ge 1/7$.
+  </div>
+  <p class="frag" style="margin-top:1rem">Plan: (1) identificar $\theta$ y por qué cumple la hipótesis; (2) entender por qué una esperanza permite acotar una probabilidad; (3) aplicar el Lema B.1 paso a paso; (4) ver que $1/7$ no se puede mejorar.</p>
+ </div>
+ <aside class="notes">Este ejercicio es el último eslabón de la prueba del NFL: pasar de la esperanza (5.2) a la afirmación probabilística del teorema.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="De la Ecuación (5.2) a θ">
+ <div class="inner">
+  <h2>Reconstruir la conexión: $\theta=L_\D(A(S))$</h2>
+  <div class="box"><span class="lbl">Ecuación (5.2)</span>Existen $\D$ y $f$ con $L_\D(f)=0$ y $\ \E_{S\sim\D^m}\big[L_\D(A(S))\big]\ge\frac14$.</div>
+  <div class="steps">
+   <div class="step frag"><div>Definimos $\theta=L_\D(A(S))$, con $\D$ y $A$ fijos.</div>
+    <div class="why"><b>por qué es aleatoria</b>Depende de la muestra $S\sim\D^m$: otra muestra da otro $A(S)$ y otro error.</div></div>
+   <div class="step frag"><div>$\theta\in[0,1]$</div>
+    <div class="why"><b>por qué</b>$L_\D(h)=\PP_{(x,y)\sim\D}[h(x)\neq y]$ es una probabilidad.</div></div>
+   <div class="step frag"><div>$\E[\theta]\ge\frac14$</div>
+    <div class="why"><b>por qué</b>Es literalmente (5.2).</div></div>
+   <div class="step frag"><div>Objetivo: $\PP[\theta\ge\frac18]\ge\frac17$</div>
+    <div class="why"><b>por qué basta</b>Traducido, es $\PP_{S\sim\D^m}[L_\D(A(S))\ge\frac18]\ge\frac17$: la parte 2 del NFL.</div></div>
+  </div>
+ </div>
+ <aside class="notes">Lo que hay que ver: las hipótesis de la pista (valores en [0,1], esperanza al menos 1/4) se cumplen para θ = L_D(A(S)). La cota superior 1 viene de que el error es una probabilidad.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="¿Por qué la esperanza informa?">
+ <div class="inner cols">
+  <div>
+   <h2>¿Por qué la esperanza dice algo de la probabilidad?</h2>
+   <p class="frag"><b>Sin cota superior, no dice nada.</b> Si $\theta=N$ con probabilidad $\frac1{4N}$ y $0$ si no, entonces $\E[\theta]=\frac14$ pero $\PP[\theta\ge\frac18]=\frac1{4N}\to 0$.</p>
+   <p class="frag"><b>Con $\theta\le 1$ sí.</b> Sea $p=\PP[\theta\ge\tfrac18]$. La esperanza se reparte en dos partes:</p>
+   <div class="frag">$$\E[\theta]\ \le\ \underbrace{\tfrac18\,(1-p)}_{\theta\lt 1/8\text{ aporta poco}}\ +\ \underbrace{1\cdot p}_{\theta\le 1}$$</div>
+   <p class="frag">Para que la esperanza llegue a $\frac14$, la región $\theta\ge\frac18$ debe tener masa: <b>la cota superior limita cuánto puede aportar poca masa</b>.</p>
+  </div>
+  <div class="frag">
+   <figure><svg id="w-mk"></svg><figcaption id="w-mk-read"></figcaption></figure>
+   <div class="controls"><label>$\E[\theta]$ <input type="range" id="w-mk-mu" min="130" max="1000" value="250"></label></div>
+   <p class="small">La distribución que menos masa pone en $[\tfrac18,1]$ para una esperanza dada: casi toda su masa justo debajo de $\tfrac18$ y el resto en $1$.</p>
+  </div>
+ </div>
+ <aside class="notes">Contraejemplo primero: sin cota superior la esperanza puede venir de un evento rarísimo. Con la cota 1, el "presupuesto" de esperanza está limitado. La figura muestra la distribución extrema: mover el deslizador y ver que la masa en 1 es exactamente (8μ−1)/7.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="Lema B.1 (Markov inverso)">
+ <div class="inner">
+  <h2>Lema B.1 — Markov "inverso"</h2>
+  <div class="box"><span class="lbl">Enunciado</span>
+   Sea $Z$ una variable aleatoria con valores en $[0,1]$ y $\E[Z]=\mu$. Para todo $a\in(0,1)$:
+   $$\PP[Z\gt 1-a]\ \ge\ \frac{\mu-(1-a)}{a}.\qquad\text{En particular, }\ \PP[Z\gt a]\ \ge\ \frac{\mu-a}{1-a}\ \ge\ \mu-a.$$
+  </div>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$Y=1-Z\ \ge\ 0$$</div>
+    <div class="why"><b>por qué</b>$Z\le 1$. Markov exige una variable no negativa; $Z$ acotada por arriba nos la da.</div></div>
+   <div class="step frag"><div class="eq">$$\PP[Z\le 1-a]=\PP[Y\ge a]\ \le\ \frac{\E[Y]}{a}=\frac{1-\mu}{a}$$</div>
+    <div class="why"><b>por qué</b>Desigualdad de Markov: $\PP[Y\ge a]\le\E[Y]/a$ para $Y\ge 0$, $a\gt 0$.</div></div>
+   <div class="step frag"><div class="eq">$$\PP[Z\gt 1-a]\ \ge\ 1-\frac{1-\mu}{a}=\frac{\mu-(1-a)}{a}$$</div>
+    <div class="why"><b>por qué</b>Evento complementario.</div></div>
+   <div class="step frag"><div class="eq">$$\PP[Z\gt a]\ \ge\ \frac{\mu-a}{1-a}$$</div>
+    <div class="why"><b>por qué</b>Aplicar lo anterior con $1-a$ en lugar de $a$ (también está en $(0,1)$).</div></div>
+  </div>
+ </div>
+ <aside class="notes">Markov acota la cola superior de una variable no negativa. Aquí queremos una cota INFERIOR para la cola superior de Z, así que aplicamos Markov a 1 − Z, que es no negativa justamente porque Z ≤ 1. Por eso la cota superior es esencial.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="Aplicación del lema">
+ <div class="inner">
+  <h2>Aplicación paso a paso</h2>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\PP\Big[\theta\gt\frac18\Big]\ \ge\ \frac{\E[\theta]-\frac18}{1-\frac18}=\frac{8\,\E[\theta]-1}{7}$$</div>
+    <div class="why"><b>por qué</b>Lema B.1 con $Z=\theta$ y $a=\frac18\in(0,1)$; $\theta\in[0,1]$ cumple la hipótesis.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac{8\cdot\frac14-1}{7}=\frac17$$</div>
+    <div class="why"><b>por qué</b>$\mu\mapsto\frac{8\mu-1}{7}$ es creciente y $\E[\theta]\ge\frac14$ por (5.2).</div></div>
+   <div class="step frag"><div class="eq">$$\PP\Big[\theta\ge\frac18\Big]\ \ge\ \PP\Big[\theta\gt\frac18\Big]\ \ge\ \frac17$$</div>
+    <div class="why"><b>por qué</b>$\{\theta\gt\frac18\}\subseteq\{\theta\ge\frac18\}$.</div></div>
+   <div class="step frag"><div class="eq">$$\PP_{S\sim\D^m}\Big[L_\D(A(S))\ge\frac18\Big]\ \ge\ \frac17\qquad\blacksquare$$</div>
+    <div class="why"><b>conclusión</b>Sustituyendo $\theta=L_\D(A(S))$: (5.2) basta para la parte 2 del NFL.</div></div>
+  </div>
+  <details class="more"><summary>ver detalle: prueba directa sin el lema</summary><div class="body">
+   Con $p=\PP[\theta\ge\frac18]$: $\ \E[\theta]=\E[\theta\,\mathbf 1_{\theta\lt 1/8}]+\E[\theta\,\mathbf 1_{\theta\ge 1/8}]\le\frac18(1-p)+p$. Si $\E[\theta]\ge\frac14$: $\ \frac14\le\frac18+\frac78p$, luego $p\ge\frac17$. Es el mismo argumento que el lema, escrito a mano.
+  </div></details>
+ </div>
+ <aside class="notes">Cuidado con el paso de > a ≥: el lema da desigualdad estricta, el teorema pide ≥; el evento con ≥ es más grande, así que la cota se mantiene. El lema se enuncia con E[Z] = μ; usamos el valor real de μ, que es al menos 1/4.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="¿Se puede mejorar 1/7?">
+ <div class="inner cols">
+  <div>
+   <h2>¿Se puede mejorar el $1/7$?</h2>
+   <p>No, con la sola información $\theta\in[0,1]$ y $\E[\theta]\ge\frac14$.</p>
+   <div class="steps">
+    <div class="step frag text"><div>Sea $\theta=1$ con probabilidad $q$ y $\theta=\frac18-\eta$ con probabilidad $1-q$ ($\eta\gt 0$ pequeño).</div></div>
+    <div class="step frag text"><div>$\E[\theta]=\frac14\iff q=\dfrac{\frac14-(\frac18-\eta)}{1-(\frac18-\eta)}\ \xrightarrow{\ \eta\to 0\ }\ \dfrac{1/8}{7/8}=\dfrac17.$</div></div>
+    <div class="step frag text"><div>$\PP[\theta\ge\frac18]=q\to\frac17$: la cota se alcanza en el límite. <b>Es óptima.</b></div></div>
+   </div>
+  </div>
+  <div class="frag">
+   <div class="box"><span class="lbl">Lectura</span>La distribución extrema "gasta" la esperanza de la forma más barata posible: casi toda la masa justo por debajo del umbral y el resto en el valor máximo permitido. Cualquier otra distribución pone más masa sobre $\frac18$.</div>
+   <p class="small">Las constantes $\frac18$ y $\frac17$ no tienen nada especial: con otro umbral $a$ el mismo lema da $\PP[\theta\gt a]\ge\frac{1/4-a}{1-a}$.</p>
+  </div>
+ </div>
+ <aside class="notes">Mostrar que la cota es ajustada. Esto responde a por qué aparece precisamente 1/7 en el enunciado del NFL.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="Simulación: variables en [0,1]">
+ <div class="inner cols wide-r">
+  <div>
+   <h2>Simulación en Python</h2>
+   <p><b>Pregunta.</b> Para variables en $[0,1]$, ¿cómo se relacionan $\E[\theta]$ y $\PP[\theta\ge\frac18]$? ¿Alguna queda bajo la cota?</p>
+   <p class="small">250 distribuciones Beta con parámetros al azar y una familia de dos puntos $\{0.124,\,1\}$; 20 000 muestras cada una.</p>
+   <ul class="clean frag">
+    <li>Todos los puntos están sobre la recta del lema $\frac{8\mu-1}{7}$.</li>
+    <li>Las distribuciones "naturales" quedan muy por encima: la cota es de <b>peor caso</b>.</li>
+    <li>La familia de dos puntos recorre la recta: en $\mu=\frac14$ da $\hat{\PP}\approx 0.144\approx\frac17$.</li>
+   </ul>
+  </div>
+  <figure>
+   <svg id="c-ej1"></svg>
+   <div class="legend" id="c-ej1-lg"></div>
+   <figcaption>Cada punto es una distribución: su esperanza estimada y su probabilidad estimada de $\theta\ge\frac18$.</figcaption>
+  </figure>
+ </div>
+ <p class="inner note">250 distribuciones no son todas las distribuciones en $[0,1]$: la simulación ilustra la relación, la desigualdad la garantiza el lema. Código: notebook, sección 3.</p>
+ <aside class="notes">Leer el gráfico: la región sombreada es E ≥ 1/4; ningún punto queda bajo 1/7 en esa región. Los cuadrados están pegados a la recta: son las distribuciones extremas.</aside>
+</section>
+
+<section class="slide" data-sec="e1" data-title="Resumen Ejercicio 1">
+ <div class="inner">
+  <h2>Resumen — Ejercicio 1</h2>
+  <ol class="road">
+   <li><div>$\theta=L_\D(A(S))$ es aleatoria por $S$, vive en $[0,1]$ y (5.2) da $\E[\theta]\ge\frac14$.</div></li>
+   <li><div>Lema B.1 = Markov aplicado a $1-\theta\ge 0$; con $a=\frac18$: $\PP[\theta\ge\frac18]\ge\frac{8\E[\theta]-1}{7}\ge\frac17$.</div></li>
+   <li><div>La cota superior $\theta\le1$ es esencial, y $\frac17$ es óptimo.</div></li>
+  </ol>
+  <div class="controls" style="margin-top:1.4rem"><button class="btn jump" data-sec="s51">Volver a 5.1</button><button class="btn jump" data-sec="e2">Ejercicio 2</button><button class="btn jump" data-sec="inicio">Índice</button></div>
+ </div>
+ <aside class="notes">Cerrar: con esto la prueba del NFL está completa.</aside>
+</section>
+
+<!-- =============================================================== EJERCICIO 2 -->
+<section class="slide" data-sec="e2" data-title="Enunciado">
+ <div class="inner">
+  <h2>Ejercicio 2 — rectángulos en 2D o en 5D</h2>
+  <div class="quote"><span class="lbl">Enunciado (sección 5.5)</span>
+   2. Assume you are asked to design a learning algorithm to predict whether patients are going to suffer a heart attack. Relevant patient features the algorithm may have access to include blood pressure (BP), body-mass index (BMI), age (A), level of physical activity (P), and income (I).<br>
+   You have to choose between two algorithms; the first picks an axis aligned rectangle in the two dimensional space spanned by the features BP and BMI and the other picks an axis aligned rectangle in the five dimensional space spanned by all the preceding features.
+   <ol style="margin:.4rem 0 0"><li>Explain the pros and cons of each choice.</li><li>Explain how the number of available labeled training samples will affect your choice.</li></ol>
+  </div>
+  <p class="small frag" style="margin-top:.8rem">El análisis es estadístico: no se extraen conclusiones clínicas.</p>
+ </div>
+ <aside class="notes">Aclarar desde el principio que es un ejercicio sobre clases de hipótesis; el contexto médico es solo ilustrativo.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Formalización de las dos clases">
+ <div class="inner">
+  <h2>Las dos clases de hipótesis</h2>
+  <div class="cols">
+   <div>
+    <h3>$\cH_2$: rectángulos en (BP, BMI)</h3>
+    $$h(x)=1\iff a_1\le x_{\text{BP}}\le b_1\ \text{ y }\ a_2\le x_{\text{BMI}}\le b_2$$
+    <p>4 parámetros. $\ \mathrm{VCdim}(\cH_2)=4$.</p>
+   </div>
+   <div>
+    <h3>$\cH_5$: rectángulos en las 5 variables</h3>
+    $$h(x)=1\iff a_j\le x_j\le b_j\quad\text{para } j=1,\dots,5$$
+    <p>10 parámetros. $\ \mathrm{VCdim}(\cH_5)=10$.</p>
+   </div>
+  </div>
+  <div class="steps">
+   <div class="step frag"><div>$\cH_2\subseteq\cH_5$</div>
+    <div class="why"><b>por qué</b>Un rectángulo en (BP, BMI) es uno en 5D con $a_j=-\infty$, $b_j=+\infty$ en A, P, I.</div></div>
+   <div class="step frag"><div>$\eapp(\cH_5)\le\eapp(\cH_2)$</div>
+    <div class="why"><b>por qué</b>Mínimo sobre un conjunto mayor (sección 5.2).</div></div>
+   <div class="step frag"><div>Datos suficientes (caso realizable, rectángulo ajustado): $\ m\ \ge\ \dfrac{2d\log(2d/\delta)}{\epsilon}$</div>
+    <div class="why"><b>de dónde</b>Ejercicio 2.3 del libro, en $\mathbb R^d$. Pasar de $d=2$ a $d=5$ multiplica el número de muestras por más de 2,5.</div></div>
+  </div>
+  <details class="more"><summary>ver detalle: dimensión VC</summary><div class="body">La dimensión VC (cap. 6) mide la complejidad de una clase infinita: el mayor número de puntos que la clase puede etiquetar de todas las formas posibles. Para rectángulos alineados en $\mathbb R^d$ vale $2d$. Aquí basta la intuición: más parámetros libres, más capacidad de ajustarse a la muestra.</div></details>
+ </div>
+ <aside class="notes">La clave: las clases están anidadas. Eso nos da la comparación de los errores de aproximación sin calcular nada. La comparación de estimación viene de la complejidad: VC 4 contra 10.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Pros y contras">
+ <div class="inner">
+  <h2>1. Pros y contras de cada elección</h2>
+  <div class="tscroll"><table class="t">
+   <tr><th></th><th>2D (BP, BMI)</th><th>5D (BP, BMI, A, P, I)</th></tr>
+   <tr class="frag"><td>Capacidad de representación</td><td>Limitada: ignora A, P, I. Si influyen, $\eapp(\cH_2)\gt 0$.</td><td>Mayor: contiene a $\cH_2$, así que $\eapp(\cH_5)\le\eapp(\cH_2)$.</td></tr>
+   <tr class="frag"><td>Complejidad</td><td>4 parámetros, VC $=4$.</td><td>10 parámetros, VC $=10$.</td></tr>
+   <tr class="frag"><td>Error de estimación con $m$ fijo</td><td>Menor.</td><td>Mayor: 10 bordes que estimar con los mismos datos.</td></tr>
+   <tr class="frag"><td>Muestras necesarias</td><td>$\approx\frac{4\log(4/\delta)}{\epsilon}$</td><td>$\approx\frac{10\log(10/\delta)}{\epsilon}$</td></tr>
+   <tr class="frag"><td>Riesgo típico</td><td><i>Underfitting</i> (sesgo).</td><td><i>Overfitting</i> (complejidad).</td></tr>
+   <tr class="frag"><td>Otros</td><td>Menos variables que medir; más interpretable.</td><td>Variables poco informativas suman estimación sin reducir aproximación.</td></tr>
+  </table></div>
+ </div>
+ <aside class="notes">Cada fila se conecta con un término de la descomposición. No hay una respuesta absoluta: la tabla dice qué se gana y qué se pierde.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Visualización: rectángulo ajustado">
+ <div class="inner">
+  <h2>El rectángulo más ajustado en 2D y en 5D</h2>
+  <div class="controls">
+   <label>muestras $m$ <input type="range" id="w-rect-m" min="0" max="6" value="1"></label>
+   <button class="btn" id="w-rect-new">Nueva muestra</button>
+   <span class="readout" id="w-rect-read"></span>
+  </div>
+  <div class="cols">
+   <figure><svg id="w-rect-a" class="tall"></svg><figcaption>Plano (BP, BMI). Banda: rectángulo verdadero proyectado.</figcaption></figure>
+   <figure><svg id="w-rect-b" class="tall"></svg><figcaption>Los 5 intervalos del rectángulo en cada variable. Banda: intervalo verdadero.</figcaption></figure>
+  </div>
+  <div class="legend" id="w-rect-lg"></div>
+ </div>
+ <aside class="notes">Datos sintéticos: el rectángulo verdadero depende mucho de BP y BMI y poco de A, P, I (recorta 5 % del rango de cada una). Con pocas muestras el rectángulo 5D queda encogido en las 5 variables y rechaza muchos positivos. Con muchas muestras converge al verdadero; el 2D nunca puede capturar A, P, I.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Efecto del tamaño de muestra">
+ <div class="inner">
+  <h2>2. Cómo afecta el número de muestras</h2>
+  <div class="box">$$L_\D(h_S)=\underbrace{\eapp(\cH_d)}_{\text{no depende de }m}+\underbrace{\eest(\cH_d,m)}_{\text{crece con }d,\ \text{baja con }m}$$</div>
+  <div class="steps">
+   <div class="step frag"><div><b>Pocos datos:</b> domina $\eest$, que es mayor en 5D $\Rightarrow$ conviene <b>2D</b>.</div>
+    <div class="why"><b>por qué</b>Con $m$ pequeño, la clase rica se ajusta al azar de la muestra.</div></div>
+   <div class="step frag"><div><b>Muchos datos:</b> $\eest\to 0$ en ambas; decide $\eapp$ $\Rightarrow$ conviene <b>5D</b>.</div>
+    <div class="why"><b>por qué</b>$\eapp(\cH_5)\le\eapp(\cH_2)$ y la estimación ya no pesa.</div></div>
+   <div class="step frag"><div><b>Si A, P, I no aportan:</b> $\eapp$ es igual en ambas $\Rightarrow$ 2D siempre.</div>
+    <div class="why"><b>por qué</b>Mismo sesgo, menos complejidad.</div></div>
+  </div>
+  <p class="idea frag">La elección depende de $m$: es el compromiso sesgo–complejidad. En la práctica el punto de cruce se estima con datos de validación (cap. 11).</p>
+ </div>
+ <aside class="notes">Responder la segunda pregunta del ejercicio con la descomposición. La tercera viñeta es un matiz importante: agregar variables irrelevantes solo empeora.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Simulación: el cruce">
+ <div class="inner cols wide-r">
+  <div>
+   <h2>Simulación en Python</h2>
+   <p><b>Pregunta.</b> ¿A partir de qué $m$ conviene la clase compleja?</p>
+   <p class="small">5 variables uniformes en $[0,1]$; etiqueta = pertenencia a un rectángulo 5D (realizable en 5D); rectángulo ajustado sobre los positivos; 200 repeticiones por $m$; error estimado con 40 000 puntos de prueba.</p>
+   <ul class="clean frag">
+    <li>$m\lesssim 100$: gana 2D (5D tiene 10 bordes encogidos).</li>
+    <li>$m\gtrsim 150$: gana 5D; su error tiende a $0$ porque $\eapp(\cH_5)=0$.</li>
+    <li>2D se estanca en su piso $\eapp(\cH_2)\approx 0.05$.</li>
+   </ul>
+  </div>
+  <figure>
+   <svg id="c-ej2"></svg>
+   <div class="legend" id="c-ej2-lg"></div>
+   <figcaption>Error de generalización promedio $L_\D(h_S)$ según el tamaño de muestra (escala logarítmica).</figcaption>
+  </figure>
+ </div>
+ <p class="inner note">El punto exacto del cruce depende de cuánto importan A, P, I en el rectángulo verdadero elegido; lo general es que exista el cruce. Código: notebook, sección 4.</p>
+ <aside class="notes">Leer el cruce: antes gana la clase simple por estimación, después la compleja por aproximación. Nada de esto dice algo sobre pacientes reales.</aside>
+</section>
+
+<section class="slide" data-sec="e2" data-title="Resumen Ejercicio 2">
+ <div class="inner">
+  <h2>Resumen — Ejercicio 2</h2>
+  <ol class="road">
+   <li><div>$\cH_2\subseteq\cH_5$: 5D tiene menor (o igual) error de aproximación y mayor error de estimación.</div></li>
+   <li><div>Pocos datos $\Rightarrow$ 2D. Muchos datos $\Rightarrow$ 5D. Variables irrelevantes $\Rightarrow$ 2D siempre.</div></li>
+   <li><div>Es el compromiso sesgo–complejidad de 5.2 en un caso concreto.</div></li>
+  </ol>
+  <div class="controls" style="margin-top:1.4rem"><button class="btn jump" data-sec="s52">Volver a 5.2</button><button class="btn jump" data-sec="e3">Ejercicio 3</button><button class="btn jump" data-sec="inicio">Índice</button></div>
+ </div>
+ <aside class="notes">Cierre del ejercicio.</aside>
+</section>
+
+<!-- =============================================================== EJERCICIO 3 -->
+<section class="slide" data-sec="e3" data-title="Enunciado">
+ <div class="inner">
+  <h2>Ejercicio 3 — dominios más grandes, cota más fuerte</h2>
+  <div class="quote"><span class="lbl">Enunciado (sección 5.5)</span>
+   3. Prove that if $|\X|\ge km$ for a positive integer $k\ge 2$, then we can replace the lower bound of $1/4$ in the No-Free-Lunch theorem with
+   $$\frac{k-1}{2k}=\frac12-\frac1{2k}.$$
+   Namely, let $A$ be a learning algorithm for the task of binary classification. Let $m$ be any number smaller than $|\X|/k$, representing a training set size. Then, there exists a distribution $\D$ over $\X\times\{0,1\}$ such that:
+   <ul><li>There exists a function $f:\X\to\{0,1\}$ with $L_\D(f)=0$.</li><li>$\E_{S\sim\D^m}\big[L_\D(A(S))\big]\ge\dfrac12-\dfrac1{2k}$.</li></ul>
+  </div>
+ </div>
+ <aside class="notes">El enunciado está en términos de esperanza (como 5.2), no de probabilidad.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Qué cambia respecto del NFL">
+ <div class="inner">
+  <h2>¿Qué parte de la prueba hay que ajustar?</h2>
+  <div class="tscroll"><table class="t">
+   <tr><th></th><th>NFL original</th><th>Ejercicio 3</th></tr>
+   <tr><td>Dominio</td><td>$|C|=2m$</td><td>$|C|=km$</td></tr>
+   <tr><td>Etiquetados</td><td>$T=2^{2m}$</td><td>$T=2^{km}$</td></tr>
+   <tr class="frag"><td>Puntos no vistos</td><td>$p\ge 2m-m=m$</td><td>$p\ge km-m=(k-1)m$</td></tr>
+   <tr class="frag"><td>Peso de cada punto en $L_{\D_i}$</td><td>$\frac1{2m}$</td><td>$\frac1{km}$</td></tr>
+   <tr class="frag"><td>Fracción no vista $\frac p{|C|}$</td><td>$\ge\frac12$</td><td>$\ge\frac{k-1}{k}$</td></tr>
+   <tr class="frag"><td>Cota</td><td>$\frac12\cdot\frac12=\frac14$</td><td>$\frac{k-1}{k}\cdot\frac12=\frac{k-1}{2k}$</td></tr>
+  </table></div>
+  <p class="idea frag">No cambian: el promedio sobre etiquetados (máximo $\ge$ promedio $\ge$ mínimo) ni el truco de parejas, que da $\tfrac12$ en cada punto no visto.</p>
+ </div>
+ <aside class="notes">La única diferencia es cuántos puntos quedan sin ver. El 1/2 del truco de parejas es el mismo; el otro factor, la fracción de puntos no vistos, pasa de 1/2 a (k−1)/k.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Demostración (1): el factor k">
+ <div class="inner">
+  <h2>Demostración — dónde aparece $k$</h2>
+  <div class="steps">
+   <div class="step frag"><div>$C\subseteq\X$ con $|C|=km$; $\ \D_i$ uniforme en $C$ etiquetada por $f_i$; $\ L_{\D_i}(f_i)=0$.</div>
+    <div class="why"><b>por qué</b>Existe porque $m\lt|\X|/k$. La parte 1 vale para cada $i$.</div></div>
+   <div class="step frag"><div class="eq">$$\max_{i}\E_{S\sim\D_i^m}\big[L_{\D_i}(A(S))\big]\ \ge\ \min_{j}\frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)$$</div>
+    <div class="why"><b>por qué</b>Pasos 1 y 2 del NFL, sin cambios (ahora hay $N=(km)^m$ secuencias).</div></div>
+   <div class="step frag"><div>Fijamos $j$; $\ v_1,\dots,v_p$ los no vistos: $\ p\ge km-m=(k-1)m$.</div>
+    <div class="why"><b>por qué</b>$S_j$ tiene a lo sumo $m$ puntos distintos.</div></div>
+   <div class="step frag"><div class="eq">$$L_{\D_i}(h)=\frac1{km}\sum_{x\in C}\mathbf 1[h(x)\neq f_i(x)]\ \ge\ \frac{p}{km}\cdot\frac1p\sum_{r=1}^{p}\mathbf 1[h(v_r)\neq f_i(v_r)]$$</div>
+    <div class="why"><b>por qué</b>Quitamos los puntos vistos y multiplicamos y dividimos por $p$.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac{k-1}{k}\cdot\frac1p\sum_{r=1}^{p}\mathbf 1[h(v_r)\neq f_i(v_r)]$$</div>
+    <div class="why"><b>aquí aparece $k$</b>$p\ge(k-1)m\ \Rightarrow\ \frac p{km}\ge\frac{k-1}{k}$: la fracción del dominio que la muestra no cubre.</div></div>
+  </div>
+ </div>
+ <aside class="notes">El paso clave es el último: el factor (k−1)/k es la fracción mínima del dominio que queda sin ver. En el NFL original ese factor era 1/2.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Demostración (2): conclusión">
+ <div class="inner">
+  <h2>Demostración — conclusión</h2>
+  <div class="steps">
+   <div class="step frag"><div class="eq">$$\frac1T\sum_{i=1}^{T}L_{\D_i}\big(A(S_j^i)\big)\ \ge\ \frac{k-1}{k}\cdot\frac1p\sum_{r=1}^{p}\frac1T\sum_{i=1}^{T}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]$$</div>
+    <div class="why"><b>por qué</b>La cota anterior con $h=A(S_j^i)$, promediada en $i$; intercambio de sumas finitas.</div></div>
+   <div class="step frag"><div class="eq">$$\ge\ \frac{k-1}{k}\cdot\min_{r\in[p]}\frac1T\sum_{i=1}^{T}\mathbf 1\big[A(S_j^i)(v_r)\neq f_i(v_r)\big]\ =\ \frac{k-1}{k}\cdot\frac12$$</div>
+    <div class="why"><b>por qué</b>Promedio $\ge$ mínimo; truco de parejas: sin cambios, vale $\frac12$ para cada $v_r$.</div></div>
+   <div class="step frag"><div class="eq">$$\max_i\ \E_{S\sim\D_i^m}\big[L_{\D_i}(A(S))\big]\ \ge\ \frac{k-1}{2k}=\frac12-\frac1{2k}$$</div>
+    <div class="why"><b>conclusión</b>Tomando $\D$ = el $\D_i$ que alcanza el máximo y $f=f_i$: se cumplen las dos condiciones. $\;\blacksquare$</div></div>
+   <div class="step frag text"><div>Verificación: $k=2$ da $\frac{1}{4}$, el NFL original.</div></div>
+  </div>
+  <details class="more"><summary>ver detalle: versión en probabilidad</summary><div class="body">Con $\mu=\E[\theta]\ge\frac{k-1}{2k}$ y el Lema B.1, para $a\in(0,1)$: $\PP[\theta\gt a]\ge\frac{\mu-a}{1-a}$. Por ejemplo, con $a=\frac14$: $\PP[\theta\gt\frac14]\ge\frac{(k-1)/(2k)-1/4}{3/4}=\frac{k-2}{3k}\to\frac13$.</div></details>
+ </div>
+ <aside class="notes">La conclusión sigue exactamente la estructura del NFL. Comprobar el caso k = 2 da confianza en la cuenta.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Visualización: el factor k">
+ <div class="inner cols">
+  <div>
+   <h2>El dominio crece, la muestra no</h2>
+   <div class="controls"><label>$k$ <input type="range" id="w-k-k" min="2" max="12" value="3"></label></div>
+   <figure><svg id="w-k-grid"></svg></figure>
+   <div class="readout" id="w-k-read"></div>
+  </div>
+  <figure>
+   <svg id="w-k-curve"></svg>
+   <div class="legend" id="w-k-lg"></div>
+   <figcaption>Cota $\frac{k-1}{2k}$ y error promedio simulado (notebook, sección 5; $m=5$, 6000 repeticiones por $k$).</figcaption>
+  </figure>
+ </div>
+ <aside class="notes">Con m = 4 fijo, aumentar k: la muestra cubre una fracción cada vez menor. A la derecha, la cota y la simulación: sin reemplazo los puntos caen exactamente sobre la curva; con reemplazo quedan por encima.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Interpretación">
+ <div class="inner cols">
+  <div>
+   <h2>Interpretación</h2>
+   <ul class="clean">
+    <li class="frag">$\frac12-\frac1{2k}$ es creciente en $k$ y tiende a $\frac12$.</li>
+    <li class="frag">$\frac12$ es el error de <b>lanzar una moneda</b>. Si la muestra cubre una fracción $\le\frac1k$ del dominio, en el peor caso ningún algoritmo supera sustancialmente al azar.</li>
+    <li class="frag">Lo que importa es la <b>razón</b> entre tamaño de muestra y tamaño del dominio, no $m$ por sí solo.</li>
+    <li class="frag">Si $\X$ es infinito, vale para todo $k$: para cada $m$ y cada $A$, hay tareas realizables con error esperado tan cerca de $\frac12$ como se quiera.</li>
+   </ul>
+  </div>
+  <div class="frag">
+   <div class="box"><span class="lbl">Simulación (notebook, sección 5)</span>
+    <ul class="clean">
+     <li><b>Sin reemplazo</b> (exactamente $m$ puntos distintos): el error promedio coincide con $\frac{k-1}{2k}$. Es el peor caso de la prueba, $p=(k-1)m$.</li>
+     <li><b>Con reemplazo</b>: queda por encima, porque las repeticiones dejan más puntos sin ver.</li>
+     <li>Medimos el <b>promedio</b> sobre etiquetados; el teorema habla del <b>máximo</b>, que es aún mayor.</li>
+    </ul>
+    <p class="small">Un algoritmo, $m=5$, $k\le 20$: ilustra, no demuestra.</p>
+   </div>
+  </div>
+ </div>
+ <aside class="notes">Mensaje final: dominios grandes respecto de la muestra hacen imposible aprender sin sesgo, y el error de peor caso se acerca al de adivinar al azar.</aside>
+</section>
+
+<section class="slide" data-sec="e3" data-title="Resumen Ejercicio 3">
+ <div class="inner">
+  <h2>Resumen — Ejercicio 3</h2>
+  <ol class="road">
+   <li><div>Con $|C|=km$, al menos $(k-1)m$ puntos quedan sin ver: el factor $\frac12$ de la fracción no vista pasa a $\frac{k-1}{k}$.</div></li>
+   <li><div>El truco de parejas no cambia: $\frac12$ de error en cada punto no visto. Resultado: $\frac{k-1}{2k}$.</div></li>
+   <li><div>$k\to\infty$: la cota tiende a $\frac12$, el error de adivinar.</div></li>
+  </ol>
+  <div class="controls" style="margin-top:1.4rem"><button class="btn jump" data-sec="s51">Volver a 5.1</button><button class="btn jump" data-sec="apx">Apéndice</button><button class="btn jump" data-sec="inicio">Índice</button></div>
+ </div>
+ <aside class="notes">Cierre del ejercicio.</aside>
+</section>
+
+<!-- =============================================================== APÉNDICE -->
+<section class="slide" data-sec="apx" data-title="Notación">
+ <div class="inner">
+  <h2>Notación</h2>
+  <div class="tscroll"><table class="t">
+   <tr><th>Símbolo</th><th>Significado</th></tr>
+   <tr><td>$\X,\ \D$</td><td>Dominio; distribución sobre $\X\times\{0,1\}$.</td></tr>
+   <tr><td>$S\sim\D^m$</td><td>Muestra de $m$ ejemplos i.i.d. según $\D$.</td></tr>
+   <tr><td>$L_\D(h)=\PP_{(x,y)\sim\D}[h(x)\neq y]$</td><td>Error verdadero (pérdida 0-1).</td></tr>
+   <tr><td>$L_S(h)=\frac1m\sum_t\mathbf 1[h(x_t)\neq y_t]$</td><td>Error empírico.</td></tr>
+   <tr><td>$\mathrm{ERM}_\cH(S)$</td><td>Hipótesis de $\cH$ con menor error empírico.</td></tr>
+   <tr><td>$\eapp,\ \eest$</td><td>Errores de aproximación y de estimación.</td></tr>
+   <tr><td>$f_\D$</td><td>Predictor de Bayes; $L_\D(f_\D)$ es el menor error posible.</td></tr>
+   <tr><td>$C,\ T,\ f_i,\ \D_i,\ S_j^i$</td><td>Objetos de la prueba del NFL: subdominio, número de etiquetados, etiquetados, distribuciones, secuencias etiquetadas.</td></tr>
+  </table></div>
+ </div>
+ <aside class="notes">Referencia rápida para preguntas.</aside>
+</section>
+
+<section class="slide" data-sec="apx" data-title="Desigualdad de Markov">
+ <div class="inner cols">
+  <div>
+   <h2>Desigualdad de Markov</h2>
+   <div class="box">Si $Y\ge 0$ y $a\gt 0$: $\quad\PP[Y\ge a]\le\dfrac{\E[Y]}{a}$.</div>
+   <div class="steps">
+    <div class="step frag"><div class="eq">$$Y\ \ge\ a\cdot\mathbf 1[Y\ge a]$$</div><div class="why"><b>por qué</b>Si $Y\ge a$ el lado derecho es $a\le Y$; si no, es $0\le Y$.</div></div>
+    <div class="step frag"><div class="eq">$$\E[Y]\ \ge\ a\,\PP[Y\ge a]$$</div><div class="why"><b>por qué</b>Tomar esperanza (monotonía).</div></div>
+   </div>
+  </div>
+  <div>
+   <h3>Por qué hace falta $Y\ge 0$</h3>
+   <p>Sin esa condición, valores muy negativos podrían compensar la masa grande y la esperanza no controlaría la cola. En el Lema B.1 la no negatividad de $1-Z$ sale de $Z\le 1$.</p>
+  </div>
+ </div>
+ <aside class="notes">Prueba de una línea, por si preguntan.</aside>
+</section>
+
+<section class="slide" data-sec="apx" data-title="Mapa del capítulo y referencias">
+ <div class="inner cols">
+  <div>
+   <h2>Mapa del capítulo</h2>
+   <ol class="road">
+    <li><div><b>5.1</b> NFL: no hay aprendiz universal $\Rightarrow$ hace falta sesgo inductivo.</div></li>
+    <li><div><b>5.2</b> $L_\D(h_S)=\eapp+\eest$ $\Rightarrow$ compromiso sesgo–complejidad.</div></li>
+    <li><div><b>Ej. 1</b> Cierra la prueba del NFL: de $\E\ge\frac14$ a $\PP\ge\frac17$.</div></li>
+    <li><div><b>Ej. 2</b> El compromiso en un caso concreto: 2D o 5D según $m$.</div></li>
+    <li><div><b>Ej. 3</b> Dominios $km$: la cota sube a $\frac12-\frac1{2k}$.</div></li>
+   </ol>
+  </div>
+  <div>
+   <h3>Referencia</h3>
+   <p>Shalev-Shwartz, S. y Ben-David, S. (2014). <i>Understanding Machine Learning: From Theory to Algorithms</i>. Cambridge University Press. Cap. 5; Apéndice B (Lema B.1); Ejercicio 2.3.</p>
+   <h3 style="margin-top:1.2rem">Material</h3>
+   <p><code>simulaciones.ipynb</code>: una sección por tema, con pregunta, código, figura e interpretación.</p>
+   <h3 style="margin-top:1.2rem">Atajos</h3>
+   <p class="small"><kbd>1</kbd>–<kbd>6</kbd> secciones · <kbd>0</kbd> portada · <kbd>←</kbd><kbd>→</kbd> pasos · <kbd>Shift</kbd>+<kbd>→</kbd> revelar todo · <kbd>Esc</kbd>/<kbd>o</kbd> índice · <kbd>f</kbd> pantalla completa · <kbd>n</kbd> notas · <kbd>c</kbd> cámara</p>
+  </div>
+ </div>
+ <aside class="notes">Diapositiva de cierre general.</aside>
+</section>
+
+</main>
+
+<div id="bar"></div>
+<div id="notes-panel"><span class="label">Notas del expositor</span><div id="notes-body"></div></div>
+
+<footer id="foot">
+ <span class="brand">Cap. 5 · Sesgo–complejidad</span>
+ <nav class="secnav" id="secnav"></nav>
+ <span class="spacer"></span>
+ <span id="count"></span>
+ <button class="ibtn" id="b-prev" title="Anterior (←)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+ <button class="ibtn" id="b-next" title="Siguiente (→)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+ <button class="ibtn" id="b-menu" title="Índice (Esc / o)"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
+ <button class="ibtn" id="b-notes" title="Notas del expositor (n)"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg></button>
+ <button class="ibtn" id="b-cam" title="Reservar espacio para cámara (c)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></svg></button>
+ <button class="ibtn" id="b-full" title="Pantalla completa (f)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</footer>
+
+<div class="overlay" id="menu">
+ <button class="btn close" id="menu-close">Cerrar (Esc)</button>
+ <h2>Índice</h2>
+ <div class="menu-grid" id="menu-grid"></div>
+</div>
+
+<div class="overlay" id="help">
+ <button class="btn close" id="help-close">Cerrar (Esc)</button>
+ <h2>Atajos de teclado</h2>
+ <table class="t" style="max-width:40rem">
+  <tr><td><kbd>→</kbd> <kbd>Espacio</kbd> <kbd>RePág</kbd></td><td>Siguiente paso / diapositiva (dentro de la sección)</td></tr>
+  <tr><td><kbd>←</kbd> <kbd>AvPág</kbd></td><td>Paso / diapositiva anterior</td></tr>
+  <tr><td><kbd>Shift</kbd> + <kbd>→</kbd></td><td>Revelar todos los pasos de la diapositiva</td></tr>
+  <tr><td><kbd>Inicio</kbd> <kbd>Fin</kbd></td><td>Primera / última diapositiva de la sección</td></tr>
+  <tr><td><kbd>1</kbd>…<kbd>6</kbd></td><td>5.1 · 5.2 · Ej. 1 · Ej. 2 · Ej. 3 · Apéndice</td></tr>
+  <tr><td><kbd>0</kbd></td><td>Portada</td></tr>
+  <tr><td><kbd>Esc</kbd> <kbd>o</kbd></td><td>Índice completo</td></tr>
+  <tr><td><kbd>f</kbd></td><td>Pantalla completa</td></tr>
+  <tr><td><kbd>n</kbd></td><td>Notas del expositor</td></tr>
+  <tr><td><kbd>c</kbd></td><td>Reservar el lado derecho para la cámara</td></tr>
+ </table>
+ <p class="small">Al final de una sección, pulsar <kbd>→</kbd> dos veces pasa a la siguiente.</p>
+</div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= Datos exportados de simulaciones.ipynb (semilla 2026) ================= */
+const DATA = {"nfl":{"ones":[0,1,2,3,4,5,6,7,8],"err":[0.0,0.0732,0.1464,0.2197,0.2929,0.3661,0.4393,0.5125,0.5857],"avg":{"memoriza + predice 0":0.2929,"memoriza + predice 1":0.2929,"memoriza + voto mayoritario":0.2929},"max":{"memoriza + predice 0":0.5857,"memoriza + predice 1":0.5857,"memoriza + voto mayoritario":0.3658}},"dec":{"K":[1,2,4,8,16,32,64,128,256],"tr":[0.4436,0.4302,0.3804,0.2279,0.1831,0.1501,0.1066,0.0711,0.0404],"te":[0.4763,0.479,0.4331,0.2572,0.2295,0.2616,0.3073,0.3899,0.4528],"app":[0.4544,0.4544,0.4087,0.2413,0.1919,0.19,0.1538,0.1538,0.1536],"est":[0.0219,0.0246,0.0243,0.0159,0.0376,0.0717,0.1535,0.2361,0.2992],"m":100},"ej1":{"beta":[[0.448,0.974],[0.328,0.884],[0.586,1.0],[0.481,0.982],[0.913,0.999],[0.36,0.725],[0.709,0.999],[0.794,1.0],[0.493,0.986],[0.106,0.301],[0.722,0.988],[0.096,0.274],[0.073,0.202],[0.671,1.0],[0.692,1.0],[0.448,0.909],[0.39,0.944],[0.434,0.991],[0.386,0.92],[0.483,0.992],[0.404,0.918],[0.301,0.858],[0.24,0.658],[0.678,1.0],[0.461,0.981],[0.584,0.967],[0.458,0.986],[0.443,0.97],[0.679,0.984],[0.476,0.979],[0.405,0.893],[0.505,0.998],[0.683,0.999],[0.7,1.0],[0.467,0.997],[0.505,0.998],[0.556,0.997],[0.445,0.964],[0.76,1.0],[0.583,1.0],[0.502,0.998],[0.363,0.855],[0.674,1.0],[0.826,1.0],[0.278,0.705],[0.879,1.0],[0.494,0.998],[0.48,0.993],[0.902,0.999],[0.562,0.999],[0.415,0.983],[0.505,0.999],[0.296,0.658],[0.484,0.997],[0.86,0.999],[0.1,0.276],[0.439,0.977],[0.735,1.0],[0.459,0.79],[0.202,0.446],[0.411,0.977],[0.445,0.978],[0.336,0.897],[0.371,0.919],[0.513,0.992],[0.649,0.998],[0.304,0.767],[0.502,0.997],[0.676,0.951],[0.437,0.811],[0.61,0.804],[0.59,0.828],[0.505,0.837],[0.197,0.516],[0.068,0.186],[0.352,0.898],[0.52,0.929],[0.127,0.344],[0.752,1.0],[0.514,0.814],[0.325,0.912],[0.93,1.0],[0.591,1.0],[0.723,0.98],[0.647,0.999],[0.254,0.552],[0.35,0.945],[0.841,1.0],[0.775,0.999],[0.651,0.999],[0.143,0.429],[0.392,0.978],[0.454,0.993],[0.393,0.955],[0.441,0.979],[0.465,0.996],[0.398,0.964],[0.074,0.207],[0.23,0.694],[0.212,0.657],[0.203,0.629],[0.53,0.999],[0.14,0.433],[0.265,0.76],[0.898,1.0],[0.574,0.955],[0.668,1.0],[0.779,1.0],[0.4,0.981],[0.226,0.686],[0.48,0.842],[0.705,1.0],[0.6,0.999],[0.365,0.905],[0.515,0.968],[0.541,0.994],[0.471,0.996],[0.944,1.0],[0.133,0.373],[0.519,0.999],[0.531,0.995],[0.39,0.932],[0.576,1.0],[0.503,0.989],[0.292,0.828],[0.344,0.774],[0.675,0.999],[0.643,0.999],[0.315,0.823],[0.8,1.0],[0.85,0.999],[0.88,0.996],[0.854,1.0],[0.607,0.999],[0.719,1.0],[0.757,1.0],[0.923,1.0],[0.655,0.97],[0.691,0.999],[0.704,1.0],[0.447,0.937],[0.148,0.449],[0.175,0.483],[0.591,0.999],[0.262,0.642],[0.451,0.982],[0.433,0.839],[0.316,0.762],[0.126,0.365],[0.926,1.0],[0.526,0.998],[0.783,1.0],[0.46,0.995],[0.936,1.0],[0.71,0.999],[0.231,0.553],[0.404,0.936],[0.559,0.999],[0.65,0.999],[0.654,1.0],[0.324,0.894],[0.575,0.999],[0.416,0.84],[0.21,0.662],[0.751,0.997],[0.607,1.0],[0.569,0.995],[0.628,1.0],[0.599,0.929],[0.647,1.0],[0.696,1.0],[0.674,0.998],[0.644,0.997],[0.213,0.675],[0.487,0.997],[0.949,1.0],[0.391,0.976],[0.267,0.753],[0.543,0.996],[0.515,0.998],[0.564,1.0],[0.333,0.915],[0.558,0.999],[0.214,0.627],[0.125,0.382],[0.873,1.0],[0.816,1.0],[0.659,1.0],[0.853,1.0],[0.038,0.096],[0.539,0.991],[0.377,0.96],[0.861,1.0],[0.349,0.924],[0.121,0.363],[0.548,0.999],[0.506,0.998],[0.557,0.993],[0.198,0.612],[0.559,0.997],[0.588,1.0],[0.512,0.997],[0.575,0.965],[0.068,0.184],[0.624,0.983],[0.702,1.0],[0.38,0.901],[0.647,1.0],[0.59,0.999],[0.811,1.0],[0.342,0.699],[0.339,0.884],[0.921,1.0],[0.652,0.992],[0.536,0.991],[0.591,0.99],[0.396,0.95],[0.467,0.808],[0.116,0.348],[0.109,0.325],[0.518,0.999],[0.282,0.82],[0.423,0.954],[0.185,0.531],[0.431,0.988],[0.549,0.999],[0.65,0.981],[0.622,0.988],[0.554,0.999],[0.065,0.177],[0.618,0.991],[0.532,0.996],[0.38,0.857],[0.1,0.286],[0.869,1.0],[0.194,0.607],[0.708,1.0],[0.525,0.939],[0.301,0.749],[0.339,0.846],[0.209,0.656],[0.393,0.977],[0.628,1.0],[0.428,0.967],[0.32,0.811],[0.508,0.926],[0.561,0.999],[0.3,0.875],[0.368,0.928],[0.486,0.995]],"dos":[[0.13,0.007],[0.156,0.036],[0.185,0.07],[0.21,0.098],[0.237,0.129],[0.262,0.157],[0.292,0.192],[0.316,0.219],[0.339,0.246],[0.374,0.285],[0.397,0.311],[0.427,0.345],[0.448,0.37],[0.476,0.401],[0.502,0.431],[0.524,0.457],[0.553,0.49],[0.583,0.524],[0.609,0.553],[0.635,0.583],[0.656,0.607],[0.688,0.644],[0.713,0.673],[0.741,0.705],[0.766,0.733],[0.791,0.761],[0.823,0.798],[0.85,0.828],[0.872,0.854],[0.904,0.89]]},"ej2":{"m":[5,10,20,30,50,75,100,150,200,300,500,800,1200,2000],"e2":[0.2869,0.2496,0.18,0.1466,0.114,0.0945,0.0847,0.0731,0.0682,0.0625,0.0586,0.0562,0.0549,0.0537],"e5":[0.3058,0.292,0.2491,0.2102,0.1546,0.1075,0.0841,0.0606,0.0491,0.0321,0.0196,0.0126,0.0081,0.0051],"app2":0.0522},"ej3":{"k":[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"con":[0.2934,0.3577,0.3856,0.4073,0.4221,0.4315,0.4417,0.4466,0.4512,0.4566,0.4598,0.4636,0.4658,0.468,0.4688,0.471,0.4734,0.4728,0.4751],"sin":[0.249,0.3345,0.3713,0.4025,0.4154,0.4281,0.4366,0.4452,0.4514,0.4545,0.458,0.4613,0.4643,0.4674,0.469,0.4711,0.4724,0.4728,0.4741],"m":5}};
+
+/* ================= Secciones ================= */
+const SECTIONS = [
+  {id:"inicio", key:"0", n:"",   title:"Portada", desc:""},
+  {id:"s51", key:"1", n:"5.1", title:"No-Free-Lunch", desc:"No existe un aprendiz universal"},
+  {id:"s52", key:"2", n:"5.2", title:"Descomposición del error", desc:"Aproximación vs. estimación"},
+  {id:"e1",  key:"3", n:"Ej. 1", title:"De la esperanza a la probabilidad", desc:"Por qué (5.2) implica la cota 1/7"},
+  {id:"e2",  key:"4", n:"Ej. 2", title:"Rectángulos en 2D o 5D", desc:"Clase simple vs. compleja según m"},
+  {id:"e3",  key:"5", n:"Ej. 3", title:"Dominios de tamaño km", desc:"La cota (k−1)/(2k) → 1/2"},
+  {id:"apx", key:"6", n:"Ap.", title:"Apéndice", desc:"Notación, Markov, mapa del capítulo"},
+];
+const MACROS = {"\\D":"\\mathcal{D}","\\X":"\\mathcal{X}","\\cH":"\\mathcal{H}","\\E":"\\mathbb{E}","\\PP":"\\mathbb{P}",
+  "\\eapp":"\\epsilon_{\\mathrm{app}}","\\eest":"\\epsilon_{\\mathrm{est}}"};
+const KATEX_OPTS = {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+  macros:MACROS, throwOnError:false, ignoredTags:["script","noscript","style","textarea","pre","code","option"]};
+function renderMath(el){ if(window.renderMathInElement) renderMathInElement(el, KATEX_OPTS); }
+
+/* ================= Utilidades SVG ================= */
+const NS = "http://www.w3.org/2000/svg";
+function S(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in (attrs||{})) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function txt(parent,x,y,s,attrs){ const t=S("text",Object.assign({x:x,y:y},attrs||{}),parent); t.textContent=s; return t; }
+/* texto con subíndice: sub("x","3") -> x₃ con formato */
+function txtSub(parent,x,y,base,sub,attrs){ const t=S("text",Object.assign({x:x,y:y},attrs||{}),parent);
+  const a=S("tspan",{"font-style":"italic"},t); a.textContent=base;
+  const b=S("tspan",{"baseline-shift":"sub","font-size":"72%"},t); b.textContent=sub; return t; }
+function clear(svg){ while(svg.firstChild) svg.removeChild(svg.firstChild); }
+function fmt(v){ return (Math.round(v*1000)/1000).toString(); }
+
+function makePlot(svg, o){
+  clear(svg); svg.setAttribute("viewBox",`0 0 ${o.W} ${o.H}`);
+  const X0=o.l, X1=o.W-o.r, Y0=o.H-o.b, Y1=o.t;
+  const f = o.xlog ? Math.log : (v=>v);
+  const sx = v => X0 + (f(v)-f(o.x[0]))/(f(o.x[1])-f(o.x[0]))*(X1-X0);
+  const sy = v => Y0 - (v-o.y[0])/(o.y[1]-o.y[0])*(Y0-Y1);
+  const g = S("g",{},svg);
+  (o.yticks||[]).forEach(t=>{ S("line",{x1:X0,x2:X1,y1:sy(t),y2:sy(t),class:"grid"},g);
+    txt(g,X0-8,sy(t)+4,(o.yfmt||fmt)(t),{class:"tick","text-anchor":"end"}); });
+  (o.xticks||[]).forEach(t=>{ S("line",{x1:sx(t),x2:sx(t),y1:Y0,y2:Y0+5,class:"axis"},g);
+    txt(g,sx(t),Y0+19,(o.xfmt||fmt)(t),{class:"tick","text-anchor":"middle"}); });
+  S("line",{x1:X0,x2:X1,y1:Y0,y2:Y0,class:"axis"},g);
+  S("line",{x1:X0,x2:X0,y1:Y0,y2:Y1,class:"axis"},g);
+  if(o.xlabel) txt(g,(X0+X1)/2,o.H-5,o.xlabel,{class:"alabel","text-anchor":"middle"});
+  if(o.ylabel) txt(g,14,(Y0+Y1)/2,o.ylabel,{class:"alabel","text-anchor":"middle",transform:`rotate(-90 14 ${(Y0+Y1)/2})`});
+  return {sx,sy,g,X0,X1,Y0,Y1};
+}
+function pathD(P,pts){ return pts.map((p,i)=>(i?"L":"M")+P.sx(p[0]).toFixed(1)+","+P.sy(p[1]).toFixed(1)).join(""); }
+function line(P,pts,cls){ return S("path",{d:pathD(P,pts),class:cls},P.g); }
+function hline(P,y,cls){ return S("line",{x1:P.X0,x2:P.X1,y1:P.sy(y),y2:P.sy(y),class:cls},P.g); }
+function vline(P,x,cls){ return S("line",{x1:P.sx(x),x2:P.sx(x),y1:P.Y0,y2:P.Y1,class:cls},P.g); }
+function marker(g,x,y,shape,cls,r){ r=r||4.6; let e;
+  if(shape==="sq") e=S("rect",{x:x-r,y:y-r,width:2*r,height:2*r,class:cls},g);
+  else if(shape==="tri") e=S("path",{d:`M${x},${y-r*1.2}L${x+r*1.1},${y+r*.8}L${x-r*1.1},${y+r*.8}Z`,class:cls},g);
+  else e=S("circle",{cx:x,cy:y,r:r,class:cls},g);
+  return e; }
+function marks(P,pts,shape,cls,tip,r){ pts.forEach(p=>{ const e=marker(P.g,P.sx(p[0]),P.sy(p[1]),shape,cls,r);
+  if(tip){ const t=S("title",{},e); t.textContent=tip(p); } }); }
+function legend(el, items){
+  el.innerHTML = items.map(it=>{
+    const ln = it.line ? `<line x1="2" x2="32" y1="8" y2="8" class="${it.line}"/>` : "";
+    let mk = "";
+    if(it.mark){ const c=it.mark[1], s=it.mark[0];
+      mk = s==="sq" ? `<rect x="12.5" y="3.5" width="9" height="9" class="${c}"/>` :
+           s==="tri"? `<path d="M17,2.5L22,11.5L12,11.5Z" class="${c}"/>` :
+           s==="band"? `<rect x="2" y="2" width="30" height="12" class="band"/>` :
+                      `<circle cx="17" cy="8" r="4.5" class="${c}"/>`; }
+    return `<span class="lg"><svg viewBox="0 0 34 16" width="34" height="16">${ln}${mk}</svg><span>${it.label}</span></span>`;
+  }).join("");
+  renderMath(el);
+}
+function setMath(el, html){ el.innerHTML = html; renderMath(el); }
+/* generador pseudoaleatorio con semilla (reproducible) */
+function rng(seed){ let a=seed>>>0; return function(){ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1);
+  t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+
+/* ================= Widget: dominio 2m y muestra (5.1) ================= */
+function widgetGrid(){
+  const svg=document.getElementById("w-grid"), read=document.getElementById("w-grid-read");
+  const m=6, n=2*m; let R=rng(11), f=[], sample=[], algView=false;
+  const newF=()=>{ f=Array.from({length:n},()=>R()<0.5?1:0); };
+  const newS=()=>{ sample=Array.from({length:m},()=>Math.floor(R()*n)); };
+  function draw(){
+    clear(svg); svg.setAttribute("viewBox","0 0 640 190");
+    const cnt=new Array(n).fill(0); sample.forEach(i=>cnt[i]++);
+    const unseen=cnt.filter(c=>c===0).length;
+    for(let i=0;i<n;i++){
+      const x=32+i*52.5, y=88, seen=cnt[i]>0;
+      txtSub(svg,x-6,40,"x",String(i+1),{class:"dlabel"});
+      const hide = algView && !seen;
+      const c=S("circle",{cx:x,cy:y,r:17,fill: hide?"var(--surface)":(f[i]?"var(--accent)":"var(--surface)"),
+        stroke: hide?"var(--series-2)":"var(--accent)","stroke-width":2,"stroke-dasharray": seen?"":"4 3"},svg);
+      if(!seen && !algView) c.setAttribute("opacity",".55");
+      txt(svg,x,y+5,hide?"?":String(f[i]),{"text-anchor":"middle","font-size":15,fill: (!hide&&f[i])?"#fff":"var(--ink-2)"});
+      if(seen){ S("path",{d:`M${x-14},128h28`,stroke:"var(--ink)","stroke-width":2},svg);
+        txt(svg,x,150,cnt[i]>1?`×${cnt[i]}`:"",{"text-anchor":"middle",class:"tick"}); }
+    }
+    txt(svg,4,184,"marcados abajo: puntos de la muestra (×k = aparece k veces)",{class:"tick"});
+    const lst = sample.map(i=>`x_{${i+1}}`).join(",\\,");
+    setMath(read, `$S=(${lst})$ &nbsp;·&nbsp; puntos no vistos: $p=${unseen}\\ \\ge\\ m=${m}$`);
+  }
+  newF(); newS(); draw();
+  document.getElementById("w-grid-f").onclick=()=>{newF();draw();};
+  document.getElementById("w-grid-s").onclick=()=>{newS();draw();};
+  const bv=document.getElementById("w-grid-v");
+  bv.onclick=()=>{ algView=!algView; bv.classList.toggle("on",algView); draw(); };
+}
+
+/* ================= Widget: truco de parejas (5.1) ================= */
+function widgetPairs(){
+  const svg=document.getElementById("w-pairs"), read=document.getElementById("w-pairs-read");
+  const n=8, seen=[0,2,5];             // S = (x1, x3, x3, x6): m = 4, puntos distintos vistos {1,3,6}
+  let R=rng(5), f=[], vr=1, hv=0;
+  const newF=()=>{ f=Array.from({length:n},()=>R()<0.5?1:0); };
+  function row(y, labels, name, sub, markCol){
+    txtSub(svg,6,y+5,name,sub,{class:"dlabel","font-size":15});
+    for(let i=0;i<n;i++){ const x=92+i*64;
+      S("circle",{cx:x,cy:y,r:15,fill:labels[i]?"var(--accent)":"var(--surface)",stroke:"var(--accent)","stroke-width":2},svg);
+      txt(svg,x,y+5,String(labels[i]),{"text-anchor":"middle","font-size":14,fill:labels[i]?"#fff":"var(--ink-2)"});
+    }
+    if(markCol!==undefined){ const x=92+vr*64+24, ok=markCol;
+      if(ok) S("path",{d:`M${x},${y}l5,6l10,-12`,stroke:"var(--accent)","stroke-width":2.4,fill:"none"},svg);
+      else S("path",{d:`M${x},${y-7}l12,12M${x+12},${y-7}l-12,12`,stroke:"var(--ink)","stroke-width":2.4,fill:"none"},svg);
+    }
+  }
+  function draw(){
+    clear(svg); svg.setAttribute("viewBox","0 0 620 300");
+    seen.forEach(i=>S("rect",{x:92+i*64-26,y:22,width:52,height:190,class:"band"},svg));
+    S("rect",{x:92+vr*64-26,y:22,width:52,height:268,fill:"none",stroke:"var(--ink-2)","stroke-width":1.4,"stroke-dasharray":"5 4"},svg);
+    for(let i=0;i<n;i++){ const x=92+i*64; const t=txtSub(svg,x-6,14,"x",String(i+1),{class:"tick"});
+      t.style.cursor = seen.includes(i)?"default":"pointer";
+      if(!seen.includes(i)){ const hit=S("rect",{x:x-26,y:0,width:52,height:290,fill:"transparent",style:"cursor:pointer"},svg);
+        hit.addEventListener("click",()=>{vr=i;draw();}); } }
+    const fi=f.slice(), fj=f.slice(); fj[vr]=1-fj[vr];
+    const h = f.map((v,i)=> seen.includes(i)? v : (i===vr? hv : 0));
+    row(60, fi, "f", "i", h[vr]===fi[vr]);
+    row(130, fj, "f", "i′", h[vr]===fj[vr]);
+    S("line",{x1:60,x2:610,y1:180,y2:180,stroke:"var(--rule)"},svg);
+    txt(svg,6,205,"h = A(S)",{class:"dlabel","font-size":14,"font-style":"italic"});
+    for(let i=0;i<n;i++){ const x=92+i*64;
+      S("rect",{x:x-14,y:230,width:28,height:28,fill:h[i]?"var(--ink-2)":"var(--surface)",stroke:"var(--ink-2)","stroke-width":1.5},svg);
+      txt(svg,x,249,String(h[i]),{"text-anchor":"middle","font-size":13,fill:h[i]?"#fff":"var(--ink-2)"}); }
+    txt(svg,92+vr*64,284,"punto vᵣ",{"text-anchor":"middle",class:"tick"});
+    for(const i of seen) txt(svg,92+i*64,225,"visto",{"text-anchor":"middle",class:"tick"});
+    setMath(read, `Misma muestra $\\Rightarrow$ misma $h$. En $v_r=x_{${vr+1}}$: $h(v_r)=${hv}$, $f_i(v_r)=${fi[vr]}$, $f_{i'}(v_r)=${fj[vr]}$ $\\Rightarrow$ <b>exactamente un error</b> en la pareja.`);
+  }
+  newF(); draw();
+  document.getElementById("w-pairs-h").onclick=()=>{hv=1-hv;draw();};
+  document.getElementById("w-pairs-f").onclick=()=>{newF();draw();};
+}
+
+/* ================= Widget: barra descompuesta (5.2) ================= */
+function widgetStack(){
+  const svg=document.getElementById("w-stack"); svg.setAttribute("viewBox","0 0 700 92");
+  const W=640, x0=30, tot=0.40, bayes=0.12, app=0.22, sc=W/tot;
+  S("rect",{x:x0,y:20,width:bayes*sc-2,height:30,fill:"var(--accent-ink)"},svg);
+  S("rect",{x:x0+bayes*sc,y:20,width:(app-bayes)*sc-2,height:30,fill:"var(--accent)"},svg);
+  S("rect",{x:x0+app*sc,y:20,width:(tot-app)*sc,height:30,fill:"var(--accent-soft)",stroke:"var(--accent)","stroke-width":1.2},svg);
+  txt(svg,x0+bayes*sc/2,40,"error de Bayes",{"text-anchor":"middle",fill:"#fff","font-size":13});
+  txt(svg,x0+(bayes+app)*sc/2,40,"resto de aprox.",{"text-anchor":"middle",fill:"#fff","font-size":13});
+  txt(svg,x0+(app+tot)*sc/2,40,"estimación",{"text-anchor":"middle","font-size":13,fill:"var(--accent-ink)"});
+  const br=(a,b,y,s)=>{ S("path",{d:`M${x0+a*sc},${y-6}v6H${x0+b*sc-2}v-6`,fill:"none",stroke:"var(--ink-2)"},svg);
+    txt(svg,x0+(a+b)*sc/2,y+16,s,{"text-anchor":"middle",class:"dlabel"}); };
+  br(0,app,62,"aproximación: depende solo de H y D");
+  br(app,tot,62,"estimación: depende de S, m, H");
+  txt(svg,x0,13,"0",{class:"tick"}); txt(svg,x0+tot*sc,13,"error total",{class:"tick","text-anchor":"end"});
+}
+
+/* ================= Widget: curvas del compromiso (5.2) ================= */
+function widgetTradeoff(){
+  const svg=document.getElementById("w-to"), read=document.getElementById("w-to-read");
+  const cS=document.getElementById("w-to-c"), mS=document.getElementById("w-to-m");
+  const Ms=[25,50,100,200,400,1000,4000];
+  const app=c=>0.07+0.40*Math.exp(-5*c);
+  const est=(c,m)=>(0.015+0.55*c*c)*Math.sqrt(100/m);
+  legend(document.getElementById("w-to-lg"),[
+    {line:"s-ink-solid",mark:["sq","m-ink"],label:"$\\eapp$ (aproximación)"},
+    {line:"s-ink",mark:["tri","m-ink"],label:"$\\eest$ (estimación)"},
+    {line:"s-acc",label:"$L_\\D(h_S)=\\eapp+\\eest$"}]);
+  function draw(){
+    const c=cS.value/100, m=Ms[+mS.value];
+    const P=makePlot(svg,{W:620,H:360,l:48,r:16,t:14,b:44,x:[0,1],y:[0,0.7],xticks:[],yticks:[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7],
+      xlabel:"complejidad de la clase H  →",ylabel:"error"});
+    const xs=Array.from({length:101},(_,i)=>i/100);
+    line(P,xs.map(x=>[x,app(x)]),"s-ink-solid");
+    line(P,xs.filter(x=>est(x,m)<=0.7).map(x=>[x,est(x,m)]),"s-ink");
+    line(P,xs.filter(x=>app(x)+est(x,m)<=0.7).map(x=>[x,app(x)+est(x,m)]),"s-acc");
+    [0.2,0.5,0.8].forEach(x=>{ marker(P.g,P.sx(x),P.sy(app(x)),"sq","m-ink"); if(est(x,m)<0.7) marker(P.g,P.sx(x),P.sy(est(x,m)),"tri","m-ink"); });
+    let best=0; xs.forEach(x=>{ if(app(x)+est(x,m)<app(best)+est(best,m)) best=x; });
+    const yb=app(best)+est(best,m);
+    S("circle",{cx:P.sx(best),cy:P.sy(yb),r:6,class:"m-hollow"},P.g);
+    txt(P.g,P.sx(best),P.sy(yb)+22,"óptimo",{"text-anchor":"middle",class:"dlabel"});
+    hline(P,0.07,"s-ref");
+    txt(P.g,P.X1-4,P.sy(0.07)-6,"error de Bayes",{"text-anchor":"end",class:"tick"});
+    txt(P.g,P.sx(Math.max(best/2,0.06)),P.sy(0.66),"underfitting",{"text-anchor":"middle",class:"dlabel","font-style":"italic"});
+    txt(P.g,P.sx((best+1)/2),P.sy(0.66),"overfitting",{"text-anchor":"middle",class:"dlabel","font-style":"italic"});
+    vline(P,c,"s-ref2");
+    setMath(read,`$m=${m}$: &nbsp; $\\eapp=${app(c).toFixed(3)}$, &nbsp; $\\eest=${est(c,m).toFixed(3)}$, &nbsp; suma $=${(app(c)+est(c,m)).toFixed(3)}$`);
+  }
+  cS.oninput=draw; mS.oninput=draw; draw();
+}
+
+/* ================= Widget: masa extrema (Ej. 1) ================= */
+function widgetMarkov(){
+  const svg=document.getElementById("w-mk"), read=document.getElementById("w-mk-read"), s=document.getElementById("w-mk-mu");
+  function draw(){
+    const mu=s.value/1000, q=Math.max(0,(mu-1/8)/(7/8));
+    const P=makePlot(svg,{W:600,H:330,l:44,r:20,t:16,b:46,x:[-0.12,1.03],y:[0,1],xticks:[0,0.125,0.25,0.5,0.75,1],
+      xfmt:v=>({0:"0",0.125:"1/8",0.25:"1/4",0.5:"1/2",0.75:"3/4",1:"1"})[v],yticks:[0,0.25,0.5,0.75,1],xlabel:"valor de θ",ylabel:"probabilidad"});
+    S("rect",{x:P.sx(0.125),y:P.Y1,width:P.sx(1.03)-P.sx(0.125),height:P.Y0-P.Y1,class:"band",opacity:.6},P.g);
+    txt(P.g,P.sx(0.58),P.Y1+16,"evento θ ≥ 1/8",{"text-anchor":"middle",class:"dlabel"});
+    const bar=(x,h,cls)=>{ S("rect",{x:P.sx(x)-9,y:P.sy(h),width:18,height:P.Y0-P.sy(h),class:cls},P.g); };
+    bar(0.118,1-q,"m-ink"); bar(1,q,"m-acc");
+    txt(P.g,P.sx(0.118)-12,Math.max(P.sy(1-q)-8,P.Y1+12),`1 − q = ${(1-q).toFixed(3)}`,{class:"dlabel","text-anchor":"end"});
+    txt(P.g,P.sx(1)-14,Math.max(P.sy(q)-8,P.Y1+32),`q = ${q.toFixed(3)}`,{class:"dlabel","text-anchor":"end"});
+    vline(P,mu,"s-ref2");
+    txt(P.g,P.sx(mu)+5,P.Y0-8,"E[θ]",{class:"tick"});
+    setMath(read,`$\\E[\\theta]=${mu.toFixed(3)}$: la menor masa posible sobre $\\tfrac18$ es $q\\to\\frac{8\\E[\\theta]-1}{7}=${q.toFixed(3)}$` + (Math.abs(mu-0.25)<0.002?` $=\\tfrac17$`:``));
+  }
+  s.oninput=draw; draw();
+}
+
+/* ================= Widget: rectángulos 2D vs 5D (Ej. 2) ================= */
+function widgetRect(){
+  const LO=[0.20,0.20,0.05,0.00,0.05], HI=[0.80,0.80,1.00,0.95,1.00], NAMES=["BP","BMI","A","P","I"];
+  const Ms=[10,20,50,100,200,500,1000];
+  const inside=(x,lo,hi,d)=>{ for(let j=0;j<d;j++) if(x[j]<lo[j]||x[j]>hi[j]) return false; return true; };
+  const gen=(R,m)=>Array.from({length:m},()=>{ const x=[R(),R(),R(),R(),R()]; return {x:x,y:inside(x,LO,HI,5)?1:0}; });
+  const RT=rng(7), TEST=gen(RT,15000);
+  let seed=3, data=[];
+  const mS=document.getElementById("w-rect-m");
+  function tight(d, dim){ const pos=d.filter(p=>p.y); if(!pos.length) return null;
+    const lo=[],hi=[]; for(let j=0;j<dim;j++){ lo.push(Math.min(...pos.map(p=>p.x[j]))); hi.push(Math.max(...pos.map(p=>p.x[j]))); } return {lo,hi}; }
+  function err(rect,dim){ let e=0; for(const p of TEST){ const pr = rect? (inside(p.x,rect.lo,rect.hi,dim)?1:0) : 0; if(pr!==p.y) e++; } return e/TEST.length; }
+  legend(document.getElementById("w-rect-lg"),[
+    {mark:["c","m-acc"],label:"positivo"},{mark:["c","m-hollow"],label:"negativo"},
+    {line:"s-ink",label:"rectángulo ajustado en 2D ($\\cH_2$)"},{line:"s-acc",label:"rectángulo ajustado en 5D ($\\cH_5$)"},{mark:["band"],label:"verdadero"}]);
+  function draw(){
+    const m=Ms[+mS.value]; data=gen(rng(seed*97+m),m);
+    const r2=tight(data,2), r5=tight(data,5);
+    // Panel A: plano BP–BMI
+    const A=document.getElementById("w-rect-a");
+    const P=makePlot(A,{W:420,H:400,l:44,r:12,t:12,b:44,x:[0,1],y:[0,1],xticks:[0,0.5,1],yticks:[0,0.5,1],xlabel:"BP (escalado)",ylabel:"BMI (escalado)"});
+    S("rect",{x:P.sx(LO[0]),y:P.sy(HI[1]),width:P.sx(HI[0])-P.sx(LO[0]),height:P.sy(LO[1])-P.sy(HI[1]),class:"band"},P.g);
+    const r=m>300?2.6:(m>100?3.4:4.6);
+    data.forEach(p=>marker(P.g,P.sx(p.x[0]),P.sy(p.x[1]),"c",p.y?"m-acc":"m-hollow",r));
+    const rect=(R,dim,cls)=>{ if(!R) return; S("rect",{x:P.sx(R.lo[0]),y:P.sy(R.hi[1]),width:P.sx(R.hi[0])-P.sx(R.lo[0]),height:P.sy(R.lo[1])-P.sy(R.hi[1]),class:cls},P.g); };
+    rect(r2,2,"s-ink"); rect(r5,5,"s-acc");
+    // Panel B: intervalos por variable
+    const B=document.getElementById("w-rect-b"); clear(B); B.setAttribute("viewBox","0 0 420 400");
+    const x0=60,x1=400,sx=v=>x0+v*(x1-x0);
+    [0,0.5,1].forEach(t=>{ S("line",{x1:sx(t),x2:sx(t),y1:30,y2:372,class:"grid"},B); txt(B,sx(t),392,String(t),{class:"tick","text-anchor":"middle"}); });
+    NAMES.forEach((nm,j)=>{ const y=60+j*68;
+      txt(B,8,y+5,nm,{class:"dlabel"});
+      S("rect",{x:sx(LO[j]),y:y-16,width:sx(HI[j])-sx(LO[j]),height:32,class:"band"},B);
+      if(j<2){ if(r2) S("line",{x1:sx(r2.lo[j]),x2:sx(r2.hi[j]),y1:y-6,y2:y-6,class:"s-ink"},B); }
+      else S("line",{x1:sx(0),x2:sx(1),y1:y-6,y2:y-6,class:"s-ref"},B);
+      if(r5) S("line",{x1:sx(r5.lo[j]),x2:sx(r5.hi[j]),y1:y+6,y2:y+6,class:"s-acc","stroke-width":4},B);
+      if(j===2) txt(B,sx(0),y-24,"2D no restringe A, P, I (línea punteada)",{class:"tick"});
+    });
+    const npos=data.filter(p=>p.y).length;
+    setMath(document.getElementById("w-rect-read"),
+      `$m=${m}$, positivos: ${npos} &nbsp;·&nbsp; error estimado: 2D <span class="v">${err(r2,2).toFixed(3)}</span>, 5D <span class="v">${err(r5,5).toFixed(3)}</span>`);
+  }
+  mS.oninput=draw; document.getElementById("w-rect-new").onclick=()=>{seed++;draw();}; draw();
+}
+
+/* ================= Widget: dominio km (Ej. 3) ================= */
+function widgetK(){
+  const s=document.getElementById("w-k-k"), g=document.getElementById("w-k-grid"), read=document.getElementById("w-k-read");
+  const m=4;
+  legend(document.getElementById("w-k-lg"),[
+    {line:"s-acc",label:"cota $\\frac{k-1}{2k}$"},
+    {mark:["c","m-ink"],label:"simulación, con reemplazo"},
+    {mark:["sq","m-hollow"],label:"simulación, $m$ puntos distintos"},
+    {line:"s-ref2",label:"$\\tfrac12$"}]);
+  function draw(){
+    const k=+s.value, n=k*m, cols=12, rows=Math.ceil(n/cols);
+    clear(g); g.setAttribute("viewBox",`0 0 600 ${rows*44+10}`);
+    const R=rng(40+k), seen=new Set(); while(seen.size<m) seen.add(Math.floor(R()*n));
+    for(let i=0;i<n;i++){ const x=28+(i%cols)*48, y=26+Math.floor(i/cols)*44;
+      S("circle",{cx:x,cy:y,r:14,class:seen.has(i)?"m-acc":"m-hollow"},g); }
+    const P=makePlot(document.getElementById("w-k-curve"),{W:600,H:380,l:52,r:16,t:14,b:46,x:[1.5,20.5],y:[0.2,0.53],
+      xticks:[2,4,6,8,10,12,14,16,18,20],yticks:[0.25,0.3,0.35,0.4,0.45,0.5],xlabel:"k",ylabel:"error esperado"});
+    hline(P,0.5,"s-ref2"); hline(P,0.25,"s-ref");
+    txt(P.g,P.X1-4,P.sy(0.25)-6,"1/4: NFL original",{"text-anchor":"end",class:"tick"});
+    const ks=Array.from({length:185},(_,i)=>2+i*0.1);
+    line(P,ks.map(x=>[x,(x-1)/(2*x)]),"s-acc");
+    marks(P,DATA.ej3.k.map((kk,i)=>[kk,DATA.ej3.con[i]]),"c","m-ink",p=>`k=${p[0]}: ${p[1]} (con reemplazo)`);
+    marks(P,DATA.ej3.k.map((kk,i)=>[kk,DATA.ej3.sin[i]]),"sq","m-hollow",p=>`k=${p[0]}: ${p[1]} (sin reemplazo)`);
+    vline(P,k,"s-ref2");
+    S("circle",{cx:P.sx(k),cy:P.sy((k-1)/(2*k)),r:7,fill:"none",stroke:"var(--ink)","stroke-width":1.5},P.g);
+    setMath(read,`$|C|=km=${n}$ &nbsp;·&nbsp; vistos $\\le m=${m}$ &nbsp;·&nbsp; no vistos $\\ge (k-1)m=${(k-1)*m}$<br>fracción no vista $\\ge\\frac{k-1}{k}=${((k-1)/k).toFixed(3)}$ &nbsp;·&nbsp; cota $\\frac{k-1}{2k}=${((k-1)/(2*k)).toFixed(3)}$`);
+  }
+  s.oninput=draw; draw();
+}
+
+/* ================= Gráficos con los datos del notebook ================= */
+function charts(){
+  // 5.1
+  const d=DATA.nfl;
+  let P=makePlot(document.getElementById("c-nfl"),{W:600,H:380,l:52,r:16,t:14,b:46,x:[-0.4,8.4],y:[0,0.65],
+    xticks:[0,1,2,3,4,5,6,7,8],yticks:[0,0.1,0.2,0.3,0.4,0.5,0.6],xlabel:"número de puntos con f(x) = 1",ylabel:"error esperado"});
+  hline(P,0.25,"s-ref"); txt(P.g,P.X0+6,P.sy(0.25)+16,"1/4",{class:"tick"});
+  const avg=d.avg["memoriza + predice 0"];
+  hline(P,avg,"s-ink-solid"); txt(P.g,P.X0+6,P.sy(avg)-7,`promedio sobre los 256 etiquetados = ${avg.toFixed(3)}`,{class:"dlabel"});
+  line(P,d.ones.map((o,i)=>[o,d.err[i]]),"s-acc");
+  marks(P,d.ones.map((o,i)=>[o,d.err[i]]),"c","m-acc",p=>`${p[0]} unos: error ${p[1]}`,5.5);
+  legend(document.getElementById("c-nfl-lg"),[
+    {line:"s-acc",mark:["c","m-acc"],label:"error esperado de un etiquetado $f_i$"},
+    {line:"s-ink-solid",label:"promedio sobre $i$"},{line:"s-ref",label:"$\\tfrac14$"}]);
+  const t=document.getElementById("t-nfl");
+  t.innerHTML = "<tr><th>algoritmo</th><th>promedio sobre $f_i$</th><th>peor $f_i$</th></tr>" +
+    Object.keys(d.avg).map(k=>`<tr><td>${k}</td><td>${d.avg[k].toFixed(3)}</td><td>${d.max[k].toFixed(3)}</td></tr>`).join("");
+
+  // 5.2
+  const D=DATA.dec, Kt=D.K;
+  const base={W:600,H:370,l:52,r:14,t:14,b:46,x:[0.8,320],xlog:true,y:[0,0.52],xticks:Kt,yticks:[0,0.1,0.2,0.3,0.4,0.5],
+    xlabel:"complejidad K (escala log)",ylabel:"error"};
+  P=makePlot(document.getElementById("c-dec-a"),base);
+  hline(P,0.15,"s-ref"); txt(P.g,P.X0+6,P.sy(0.15)+16,"error de Bayes 0.15",{class:"tick"});
+  vline(P,16,"s-ref2");
+  line(P,Kt.map((k,i)=>[k,D.tr[i]]),"s-ink"); marks(P,Kt.map((k,i)=>[k,D.tr[i]]),"c","m-ink",p=>`K=${p[0]}: entrenamiento ${p[1]}`);
+  line(P,Kt.map((k,i)=>[k,D.te[i]]),"s-acc"); marks(P,Kt.map((k,i)=>[k,D.te[i]]),"c","m-acc",p=>`K=${p[0]}: verdadero ${p[1]}`);
+  legend(document.getElementById("c-dec-a-lg"),[
+    {line:"s-ink",mark:["c","m-ink"],label:"entrenamiento $L_S(h_S)$"},{line:"s-acc",mark:["c","m-acc"],label:"verdadero $L_\\D(h_S)$"}]);
+  P=makePlot(document.getElementById("c-dec-b"),base);
+  vline(P,16,"s-ref2");
+  line(P,Kt.map((k,i)=>[k,D.app[i]]),"s-ink-solid"); marks(P,Kt.map((k,i)=>[k,D.app[i]]),"sq","m-ink",p=>`K=${p[0]}: aproximación ${p[1]}`);
+  line(P,Kt.map((k,i)=>[k,D.est[i]]),"s-ink"); marks(P,Kt.map((k,i)=>[k,D.est[i]]),"tri","m-ink",p=>`K=${p[0]}: estimación ${p[1]}`);
+  line(P,Kt.map((k,i)=>[k,D.te[i]]),"s-acc"); marks(P,Kt.map((k,i)=>[k,D.te[i]]),"c","m-acc",p=>`K=${p[0]}: suma ${p[1]}`);
+  txt(P.g,P.sx(16)+6,P.Y1+14,"mínimo: K = 16",{class:"tick"});
+  legend(document.getElementById("c-dec-b-lg"),[
+    {line:"s-ink-solid",mark:["sq","m-ink"],label:"$\\eapp$"},{line:"s-ink",mark:["tri","m-ink"],label:"$\\eest$"},{line:"s-acc",mark:["c","m-acc"],label:"suma"}]);
+
+  // Ej. 1
+  const E=DATA.ej1;
+  P=makePlot(document.getElementById("c-ej1"),{W:600,H:420,l:52,r:16,t:14,b:46,x:[0,1],y:[0,1.02],
+    xticks:[0,0.125,0.25,0.5,0.75,1],xfmt:v=>({0:"0",0.125:"1/8",0.25:"1/4",0.5:"1/2",0.75:"3/4",1:"1"})[v],
+    yticks:[0,0.143,0.25,0.5,0.75,1],yfmt:v=>v===0.143?"1/7":fmt(v),xlabel:"E[θ]",ylabel:"P[θ ≥ 1/8]"});
+  S("rect",{x:P.sx(0.25),y:P.Y1,width:P.X1-P.sx(0.25),height:P.Y0-P.Y1,class:"band",opacity:.55},P.g);
+  txt(P.g,P.X1-6,P.sy(0.03),"región E[θ] ≥ 1/4",{class:"tick","text-anchor":"end"});
+  marks(P,E.beta,"c","m-dim",p=>`Beta: E=${p[0]}, P=${p[1]}`,3.6);
+  line(P,[[0,0],[0.125,0],[1,1]],"s-acc");
+  marks(P,E.dos,"sq","m-hollow",p=>`dos puntos: E=${p[0]}, P=${p[1]}`,3.6);
+  S("circle",{cx:P.sx(0.25),cy:P.sy(1/7),r:7,fill:"none",stroke:"var(--ink)","stroke-width":1.6},P.g);
+  txt(P.g,P.sx(0.25)+10,P.sy(1/7)+18,"(1/4, 1/7)",{class:"dlabel"});
+  legend(document.getElementById("c-ej1-lg"),[
+    {mark:["c","m-dim"],label:"Beta(a, b) al azar"},{mark:["sq","m-hollow"],label:"dos puntos $\\{0.124,\\,1\\}$"},
+    {line:"s-acc",label:"cota del Lema B.1: $\\max\\{0,\\frac{8\\mu-1}{7}\\}$"}]);
+
+  // Ej. 2
+  const Q=DATA.ej2;
+  P=makePlot(document.getElementById("c-ej2"),{W:600,H:390,l:52,r:16,t:14,b:46,x:[4,2500],xlog:true,y:[0,0.32],
+    xticks:[5,10,20,50,100,200,500,1000,2000],yticks:[0,0.05,0.1,0.15,0.2,0.25,0.3],xlabel:"tamaño de muestra m (escala log)",ylabel:"error de generalización"});
+  hline(P,Q.app2,"s-ref"); txt(P.g,P.X1-4,P.sy(Q.app2)+16,"piso de 2D: aproximación ≈ 0.05",{"text-anchor":"end",class:"tick"});
+  line(P,Q.m.map((m,i)=>[m,Q.e2[i]]),"s-ink"); marks(P,Q.m.map((m,i)=>[m,Q.e2[i]]),"c","m-ink",p=>`m=${p[0]}: 2D ${p[1]}`);
+  line(P,Q.m.map((m,i)=>[m,Q.e5[i]]),"s-acc"); marks(P,Q.m.map((m,i)=>[m,Q.e5[i]]),"sq","m-acc",p=>`m=${p[0]}: 5D ${p[1]}`);
+  S("rect",{x:P.sx(100),y:P.Y1,width:P.sx(150)-P.sx(100),height:P.Y0-P.Y1,fill:"var(--ink)",opacity:.05},P.g);
+  txt(P.g,P.sx(122),P.Y1+14,"cruce",{"text-anchor":"middle",class:"tick"});
+  txt(P.g,P.sx(12),P.sy(0.12),"gana 2D",{class:"dlabel","font-style":"italic"});
+  txt(P.g,P.sx(700),P.sy(0.12),"gana 5D",{class:"dlabel","font-style":"italic"});
+  legend(document.getElementById("c-ej2-lg"),[
+    {line:"s-ink",mark:["c","m-ink"],label:"$\\cH_2$: (BP, BMI)"},{line:"s-acc",mark:["sq","m-acc"],label:"$\\cH_5$: las 5 variables"},
+    {line:"s-ref",label:"$\\eapp(\\cH_2)$"}]);
+}
+
+/* ================= Motor de diapositivas ================= */
+const slides=[...document.querySelectorAll(".slide")];
+const bySec={}; SECTIONS.forEach(s=>bySec[s.id]=[]);
+slides.forEach(s=>{ bySec[s.dataset.sec].push(s); s._frags=[...s.querySelectorAll(".frag")]; s._shown=0; });
+let cur=0, endArmed=false, toastTimer=null;
+
+function secOf(i){ return slides[i].dataset.sec; }
+function idxInSec(i){ return bySec[secOf(i)].indexOf(slides[i]); }
+function applyFrags(s){ s._frags.forEach((f,k)=>{ f.classList.toggle("on",k<s._shown); f.classList.toggle("current",k===s._shown-1); }); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.classList.remove("show"); endArmed=false;},2600); }
+
+function go(i, fragMode){
+  if(i<0||i>=slides.length) return;
+  slides[cur].classList.remove("active");
+  cur=i; const s=slides[i];
+  if(fragMode==="all") s._shown=s._frags.length; else if(fragMode==="none") s._shown=0;
+  applyFrags(s); s.classList.add("active"); s.scrollTop=0; endArmed=false;
+  const sec=secOf(i), list=bySec[sec], k=list.indexOf(s);
+  document.getElementById("count").textContent = sec==="inicio" ? "" : `${k+1} / ${list.length}`;
+  document.getElementById("bar").style.width = sec==="inicio" ? "0" : `${100*(k+1)/list.length}%`;
+  document.querySelectorAll("#secnav button").forEach(b=>b.classList.toggle("cur",b.dataset.sec===sec));
+  const nt=s.querySelector(".notes"); document.getElementById("notes-body").textContent = nt? nt.textContent : "";
+  document.querySelectorAll(".menu-sec li").forEach(li=>li.classList.toggle("cur",+li.dataset.i===i));
+  history.replaceState(null,"",`#${sec}-${k+1}`);
+}
+function goSec(id){ const first=bySec[id][0]; if(first) go(slides.indexOf(first),"none"); closeOverlays(); }
+function next(){
+  const s=slides[cur];
+  if(s._shown<s._frags.length){ s._shown++; applyFrags(s); const f=s._frags[s._shown-1]; f.scrollIntoView({block:"nearest",behavior:"smooth"}); return; }
+  const list=bySec[secOf(cur)], k=list.indexOf(s);
+  if(k<list.length-1){ go(cur+1,"none"); return; }
+  const si=SECTIONS.findIndex(x=>x.id===secOf(cur));
+  if(si<SECTIONS.length-1){
+    if(endArmed){ goSec(SECTIONS[si+1].id); }
+    else { endArmed=true; toast(`Fin de la sección. Pulsa → otra vez para ir a: ${SECTIONS[si+1].n} ${SECTIONS[si+1].title}`); }
+  } else toast("Fin de la presentación");
+}
+function prev(){
+  const s=slides[cur];
+  if(s._shown>0){ s._shown--; applyFrags(s); return; }
+  if(idxInSec(cur)>0) go(cur-1,"all");
+}
+function revealAll(){ const s=slides[cur]; s._shown=s._frags.length; applyFrags(s); }
+
+function closeOverlays(){ document.querySelectorAll(".overlay").forEach(o=>o.classList.remove("show")); }
+function toggle(id){ const o=document.getElementById(id), was=o.classList.contains("show"); closeOverlays(); if(!was) o.classList.add("show"); }
+function toggleNotes(){ const p=document.getElementById("notes-panel"); p.classList.toggle("show"); document.getElementById("b-notes").classList.toggle("on",p.classList.contains("show")); }
+function toggleCam(){ document.body.classList.toggle("camera"); document.getElementById("b-cam").classList.toggle("on",document.body.classList.contains("camera")); }
+function toggleFull(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+
+function buildNav(){
+  // tarjetas de la portada
+  const cards=document.getElementById("cards");
+  SECTIONS.filter(s=>s.id!=="inicio").forEach(s=>{
+    const b=document.createElement("button"); b.className="card";
+    b.innerHTML=`<span class="n">${s.key}</span><span class="t">${s.n} · ${s.title}</span><span class="d">${s.desc} · ${bySec[s.id].length} diapositivas</span>`;
+    b.onclick=()=>goSec(s.id); cards.appendChild(b); });
+  // navegación inferior
+  const nav=document.getElementById("secnav");
+  SECTIONS.forEach(s=>{ const b=document.createElement("button"); b.dataset.sec=s.id;
+    b.textContent = s.id==="inicio" ? "Inicio" : s.n; b.title=`${s.title} (tecla ${s.key})`; b.onclick=()=>goSec(s.id); nav.appendChild(b); });
+  // índice completo
+  const grid=document.getElementById("menu-grid");
+  SECTIONS.forEach(s=>{ const d=document.createElement("div"); d.className="menu-sec";
+    const h=document.createElement("h3"); h.innerHTML=`<span class="n">${s.key}</span>${s.n?s.n+" · ":""}${s.title}`; h.onclick=()=>goSec(s.id); d.appendChild(h);
+    const ol=document.createElement("ol");
+    bySec[s.id].forEach(sl=>{ const li=document.createElement("li"); li.textContent=sl.dataset.title; li.dataset.i=slides.indexOf(sl);
+      li.onclick=()=>{ go(slides.indexOf(sl),"none"); closeOverlays(); }; ol.appendChild(li); });
+    d.appendChild(ol); grid.appendChild(d); });
+  // kicker de cada diapositiva
+  slides.forEach(sl=>{ const sec=SECTIONS.find(x=>x.id===sl.dataset.sec); if(sec.id==="inicio") return;
+    const k=document.createElement("div"); k.className="kicker"; k.textContent=`${sec.n} · ${sec.title}`;
+    sl.insertBefore(k,sl.firstElementChild); });
+  document.querySelectorAll(".jump").forEach(b=>b.addEventListener("click",e=>{ e.preventDefault(); goSec(b.dataset.sec); }));
+  document.getElementById("b-prev").onclick=prev; document.getElementById("b-next").onclick=next;
+  document.getElementById("b-menu").onclick=()=>toggle("menu"); document.getElementById("b-notes").onclick=toggleNotes;
+  document.getElementById("b-cam").onclick=toggleCam; document.getElementById("b-full").onclick=toggleFull;
+  document.getElementById("menu-close").onclick=closeOverlays; document.getElementById("help-close").onclick=closeOverlays;
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  const tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"&&e.target.type!=="range") return;
+  const k=e.key;
+  if(k==="Escape"){ const open=document.querySelector(".overlay.show"); if(open) closeOverlays(); else toggle("menu"); e.preventDefault(); return; }
+  if(k==="o"||k==="O"){ toggle("menu"); return; }
+  if(k==="?"||k==="h"){ toggle("help"); return; }
+  if(document.querySelector(".overlay.show")){
+    const sec=SECTIONS.find(s=>s.key===k); if(sec){ goSec(sec.id); } return; }
+  if(tag==="input"&&(k==="ArrowLeft"||k==="ArrowRight")) e.target.blur();
+  if((k==="ArrowRight"&&e.shiftKey)){ revealAll(); e.preventDefault(); return; }
+  if(k==="ArrowRight"||k==="PageDown"||k===" "){ next(); e.preventDefault(); return; }
+  if(k==="ArrowLeft"||k==="PageUp"){ prev(); e.preventDefault(); return; }
+  if(k==="Home"){ goSec(secOf(cur)); e.preventDefault(); return; }
+  if(k==="End"){ const l=bySec[secOf(cur)]; go(slides.indexOf(l[l.length-1]),"all"); e.preventDefault(); return; }
+  if(k==="f"||k==="F"){ toggleFull(); return; }
+  if(k==="n"||k==="N"){ toggleNotes(); return; }
+  if(k==="c"||k==="C"){ toggleCam(); return; }
+  const sec=SECTIONS.find(s=>s.key===k); if(sec) goSec(sec.id);
+});
+// Tras usar un deslizador o botón con el ratón, devolver el foco al documento para que las flechas sigan navegando
+document.addEventListener("pointerup",e=>{ const t=e.target; if(t.matches&&t.matches("input[type=range],button")) setTimeout(()=>t.blur(),0); });
+
+function init(){
+  if(!window.katex) document.getElementById("katex-warn").style.display="block";
+  buildNav();
+  const W=[widgetGrid,widgetPairs,widgetStack,widgetTradeoff,widgetMarkov,widgetRect,widgetK,charts];
+  W.forEach(fn=>{ try{ fn(); }catch(err){ console.error(fn.name, err); } });
+  renderMath(document.getElementById("deck"));
+  renderMath(document.getElementById("help"));
+  go(slideFromHash(), "none");
+  window.addEventListener("hashchange",()=>{ closeOverlays(); go(slideFromHash(),"none"); });
+}
+// posición desde la URL: #sec-n (p. ej. #e2-3)
+function slideFromHash(){
+  const m=location.hash.match(/^#([a-z0-9]+)-(\d+)$/);
+  if(m&&bySec[m[1]]){ const l=bySec[m[1]], sl=l[Math.min(Math.max(+m[2],1),l.length)-1]; if(sl) return slides.indexOf(sl); }
+  return 0;
+}
+window.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
